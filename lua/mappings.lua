@@ -21,14 +21,13 @@ map("n", "<leader>dx", function()
   require('dap').disconnect()
 end, { desc = "Debugger: Quit" })
 
--- Python debuggin commands
+-- Python debugging commands
 map("n", "<leader>dpr", function()
   require("dap-python").test_method()
 end, { desc = "Debug Python method" })
 
 -- Run Python Script
 local python_term_bufnr = nil
-local python_term_winid = nil
 map("n", "<leader>rr", function()
   local file = vim.fn.expand "%:p"
   local name = vim.fn.expand "%"

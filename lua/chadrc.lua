@@ -9,10 +9,22 @@ M.base46 = {
   theme = "catppuccin",
   transparency = true,
 
-  -- Customize Breakpoint
+  -- Debugger Customization
   vim.fn.sign_define("DapBreakpoint", {
     text = "●",
     texthl = "DapBreakpoint",
+    linehl = "",
+    numhl = "",
+  }),
+  vim.fn.sign_define("DapBreakpointCondition", {
+    text = "",
+    texthl = "DapBreakpointCondition",
+    linehl = "",
+    numhl = "",
+  }),
+  vim.fn.sign_define("DapStopped", {
+    text = "",
+    texthl = "DapStopped",
     linehl = "",
     numhl = "",
   }),
@@ -21,6 +33,16 @@ M.base46 = {
     bg = "NONE",
     bold = true,
   }),
+  vim.api.nvim_set_hl(0, "DapBreakpointCondition", {
+    fg = "#f38ba8", -- light red (Catppuccin pink)
+    bg = "NONE",
+    bold = true,
+  }),
+  vim.api.nvim_set_hl(0, "DapStopped", {
+    fg = "#f9e3e4",
+    bg = "NONE",
+  }),
+
   vim.api.nvim_set_hl(0, "LineNrAbove", {
       fg = "#51B3EC",
       bold = false,
@@ -28,6 +50,11 @@ M.base46 = {
   vim.api.nvim_set_hl(0, "LineNrBelow", {
       fg = "#FB508F",
       bold = false,
+  }),
+  vim.api.nvim_set_hl(0, "TabLine", {
+    fg = "#7f849c", -- a light greyish color
+    -- fg = "#cdd6f4",
+    bold = false,
   }),
 
   hl_override = {
@@ -66,7 +93,7 @@ M.base46 = {
     },
     -- Change line number colors
     CursorLineNr = {
-      fg = "#f5e0dc",
+      fg = "#e8f6f8",
       bold = true,
     },
     -- Comment formatting

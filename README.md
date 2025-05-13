@@ -1,9 +1,29 @@
-**This repo is supposed to used as config by NvChad users!**
 
-- The main nvchad repo (NvChad/NvChad) is used as a plugin by this repo.
-- So you just import its modules , like `require "nvchad.options" , require "nvchad.mappings"`
-- So you can delete the .git from this repo ( when you clone it locally ) or fork it :)
+Welcome to my Neovim config!
 
-# Credits
+- [Installation](#install)
+    - [Dependencies](#dependencies)
+- [Features](#fearues)
+- [Shortcuts](#shortcuts)
 
-1) Lazyvim starter https://github.com/LazyVim/starter as nvchad's starter was inspired by Lazyvim's . It made a lot of things easier!
+## Installation
+In order to install this configuration, just copy this repository to your ```~/.config/nvim``` directory.
+
+### Dependencies
+For Latex to function correctly you must have ```latexmk``` installed on your device with a proper pdf viewer such as zathura (```zathura```, ```zathura-pdf-poppler```).
+
+## Features
+### NvChad
+Built on the starter NvChad config.
+### Python
+Repl, debugger, formatter, and LSP.
+### C/C++
+Formatter and LSP.
+### Latex
+Compiler and snippets (WIP).
+### Markdown (notes)
+(WIP)
+
+## Shortcuts
+
+

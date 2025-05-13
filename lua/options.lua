@@ -15,10 +15,5 @@ vim.o.foldenable = true
 vim.opt.relativenumber = true
 vim.opt.scrolloff = 1
 
-vim.api.nvim_set_hl(0, "TabLine", {
-  -- fg = "#7f849c", -- a light greyish color
-  fg = "#cdd6f4",
-  bold = false,
-})
 -- local o = vim.o
 -- o.cursorlineopt ='both' -- to enable cursorline!

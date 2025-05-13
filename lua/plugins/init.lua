@@ -32,6 +32,13 @@ return {
     opts = {
       -- options here
     },
+    config = function()
+      require("outline").setup({
+        outline_window = {
+          width = 15,
+        },
+      })
+    end
   },
 
   -- For `plugins.lua` users.

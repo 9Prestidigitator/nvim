@@ -35,7 +35,7 @@ return {
     config = function()
       require("outline").setup({
         outline_window = {
-          width = 12,
+          width = 18,
         },
       })
     end

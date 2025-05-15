@@ -35,9 +35,10 @@ main leader shortcuts key: space
 
 | plugin | leader key |
 | --------------- | --------------- |
-| vim.wiki | <leader>w |
+| vim.wiki | <leader>q |
 | iron.nvim | <leader>i |
 | nvim-dap | <leader>d |
-| vimtex | \\l|
+| vimtex | \\l |
+| whichkey | <leader>w |
 
 

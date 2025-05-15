@@ -53,14 +53,6 @@ return {
     -- },
   },
 
-  -- Regular markdown previewer
-  {
-      "iamcco/markdown-preview.nvim",
-      cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-      ft = { "markdown" },
-      build = function() vim.fn["mkdp#util#install"]() end,
-  },
-
   -- Neovim Wiki for markdown links and notetaking
   {
     "lervag/wiki.vim",

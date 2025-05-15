@@ -2,11 +2,11 @@ require "nvchad.mappings"
 
 -- add yours here
 local map = vim.keymap.set
-
+-- These are some silly ones, rarely useful
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
--- Debugging commands
+-- DAP Debugging commands
 map("n", "<leader>db", "<cmd> DapToggleBreakpoint <cr>", { desc = "Add breakpoint at line" })
 map("n", "<leader>dq", "<cmd> DapClearBreakpoints <cr>", { desc = "Clear all Breakpoints" })
 map("n", "<leader>dr", "<cmd> DapContinue <cr>", { desc = "Start or continue the debugger" })
@@ -20,8 +20,7 @@ map("n", "<leader>dx", function()
   require('dap').terminate()
   require('dap').disconnect()
 end, { desc = "Debugger: Quit" })
-
--- Python debugging commands
+-- DAP Python debugging commands
 map("n", "<leader>dpr", function()
   require("dap-python").test_method()
 end, { desc = "Debug Python method" })

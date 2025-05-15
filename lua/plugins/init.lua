@@ -35,13 +35,13 @@ return {
     config = function()
       require("outline").setup({
         outline_window = {
-          width = 12,
+          width = 14,
         },
       })
     end
   },
 
-  -- For `plugins.lua` users.
+  -- Terminal markdown previewer
   {
     "OXY2DEV/markview.nvim",
     lazy = false,
@@ -51,6 +51,25 @@ return {
     -- dependencies = {
     --     "saghen/blink.cmp"
     -- },
+  },
+
+  -- Regular markdown previewer
+  {
+      "iamcco/markdown-preview.nvim",
+      cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+      ft = { "markdown" },
+      build = function() vim.fn["mkdp#util#install"]() end,
+  },
+
+  -- Neovim Wiki for markdown links and notetaking
+  {
+    "lervag/wiki.vim",
+    lazy = false, -- This is only needed if you specified lazy to be the
+                  -- default, see `:help lazy.nvim` and the LAZY LOADING
+                  -- section.
+    init = function()
+      return require("configs.wiki-vim")
+    end,
   },
 
   -- Save and Load buffers automatically for each directory
@@ -79,13 +98,6 @@ return {
   },
 
   {
-    "mfussenegger/nvim-dap",
-    config = function()
-      return require "configs.nvim-dap"
-    end,
-  },
-
-  {
     "mfussenegger/nvim-dap-python",
     ft = "python",
     dependencies = {
@@ -95,6 +107,14 @@ return {
     config = function(_, opts)
       local path = "~/.local/share/nvim/mason/packages/debugpy/venv/bin/python"
       require("dap-python").setup(path)
+    end,
+  },
+
+  -- Debugger
+  {
+    "mfussenegger/nvim-dap",
+    config = function()
+      return require "configs.nvim-dap"
     end,
   },
 

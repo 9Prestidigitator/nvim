@@ -1,29 +1,43 @@
 
-Welcome to my Neovim config!
+Welcome to my neovim config!
 
-- [Installation](#install)
-    - [Dependencies](#dependencies)
-- [Features](#fearues)
-- [Shortcuts](#shortcuts)
+*contents*
+     [Installation](#Installation)
+         [Dependencies](#Installation#Dependencies)
+     [Features](#features)
+         [nvchad](#features#nvchad)
+         [python](#features#python)
+         [c/c++](#features#c/c++)
+         [latex](#features#latex)
+         [markdown (notes)](#features#markdown%28notes%29)
+     [Shortcuts](#Shortcuts)
 
 ## Installation
-In order to install this configuration, just copy this repository to your ```~/.config/nvim``` directory.
+In order to install this configuration, just clone this repository to your ```~/.config/nvim``` directory.
 
 ### Dependencies
-For Latex to function correctly you must have ```latexmk``` installed on your device with a proper pdf viewer such as zathura (```zathura```, ```zathura-pdf-poppler```).
+For latex to function correctly you must have ```latexmk``` installed on your device with a proper pdf viewer such as zathura (```zathura```, ```zathura-pdf-poppler```).
 
 ## Features
-### NvChad
-Built on the starter NvChad config.
-### Python
-Repl, debugger, formatter, and LSP.
-### C/C++
-Formatter and LSP.
-### Latex
-Compiler and snippets (WIP).
-### Markdown (notes)
-(WIP)
+### nvchad
+built on the starter nvchad config.
+### python
+repl, debugger, formatter, and lsp.
+### c/c++
+debugger, formatter and lsp.
+### latex
+compiler and snippets (wip).
+### markdown (notes) 
+(wip)
 
 ## Shortcuts
+main leader shortcuts key: space
+
+| plugin | leader key |
+| --------------- | --------------- |
+| vim.wiki | <leader>w |
+| iron.nvim | <leader>i |
+| nvim-dap | <leader>d |
+| vimtex | \\l|
 
 

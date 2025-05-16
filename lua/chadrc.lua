@@ -67,6 +67,9 @@ M.base46 = {
     --   fg = "#7f849c",
     --   bg = "NONE",
     -- },
+    WinSeparator = {
+      fg = "#7D7D7D",
+    },
     TabLineSel = {
       fg = "#cdd6f4",
       bg = "NONE",

@@ -43,43 +43,23 @@ M.base46 = {
     bg = "NONE",
   }),
 
+  -- Upper and lower relative line number colors
   vim.api.nvim_set_hl(0, "LineNrAbove", {
-      fg = "#51B3EC",
-      bold = false,
+    fg = "#51B3EC",
+    bold = false,
   }),
   vim.api.nvim_set_hl(0, "LineNrBelow", {
-      fg = "#FB508F",
-      bold = false,
-  }),
-  vim.api.nvim_set_hl(0, "TabLine", {
-    fg = "#7f849c", -- a light greyish color
-    -- fg = "#cdd6f4",
+    fg = "#FB508F",
     bold = false,
   }),
 
   hl_override = {
-    -- Lighten inactive tabs
-    -- TabLine = {
-    --   fg = "#7f849c", -- a light greyish color
-    --   bg = "NONE",
-    -- },
-    -- TabLineFill = {
-    --   fg = "#7f849c",
-    --   bg = "NONE",
-    -- },
+    -- Change Window Separator color
     WinSeparator = {
-      fg = "#7D7D7D",
+      fg = "#6C6F7A",
     },
-    TabLineSel = {
-      fg = "#cdd6f4",
-      bg = "NONE",
-      bold = true,
-    },
-    -- Lighten nvimtree / neo-tree collapsed arrows
+    -- NvimTree (file explorer) colors
     NvimTreeIndentMarker = {
-      fg = "#7f849c",
-    },
-    NeoTreeIndentMarker = {
       fg = "#7f849c",
     },
     NvimTreeFolderArrowClosed = {
@@ -88,13 +68,16 @@ M.base46 = {
     NvimTreeFolderArrowOpen = {
       fg = "#cdd6f4",
     },
+    NeoTreeIndentMarker = {
+      fg = "#7f849c",
+    },
     NeoTreeFolderArrowClosed = {
       fg = "#7f849c",
     },
     NeoTreeFolderArrowOpen = {
       fg = "#cdd6f4",
     },
-    -- Change line number colors
+    -- Change main line number colors
     CursorLineNr = {
       fg = "#e8f6f8",
       bold = true,

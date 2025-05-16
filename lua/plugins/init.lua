@@ -41,11 +41,20 @@ return {
     end
   },
 
+  -- Markdown (Notetaking) stuff:
+  {
+    'lervag/lists.vim', -- lists
+    lazy = false,
+    init = function ()
+      vim.g.lists_filetypes = {'markdown'}
+      return require("configs.lists-vim")
+    end
+  },
+
   -- Terminal markdown previewer
   {
     "OXY2DEV/markview.nvim",
     lazy = false,
-
     -- For blink.cmp's completion
     -- source
     -- dependencies = {

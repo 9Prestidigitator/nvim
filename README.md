@@ -42,3 +42,11 @@ main leader shortcuts key: space
 | whichkey | <leader>w |
 
 
+
+- What?
+- yeah
+- kjasd
+
+
+
+

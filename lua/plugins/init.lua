@@ -1,5 +1,17 @@
 return {
 
+  -- Greeter: Alpha
+  {
+    "goolord/alpha-nvim",
+    event = "VimEnter", -- load plugin after all configuration is set
+    dependencies = {
+      -- "nvim-tree/nvim-web-devicons", -- NOTE: Enable if needed
+    },
+    init = function()
+      return require "configs.alpha"
+    end,
+  },
+
   -- Vimtex
   {
     "lervag/vimtex",
@@ -15,40 +27,40 @@ return {
     "g0t4/iron.nvim",
     branch = "fix-clear-repl",
     enabled = true,
-    event = { 'BufReadPre', 'BufNewFile' },
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
-      return require("configs.iron-nvim")
-    end
+      return require "configs.iron-nvim"
+    end,
   },
 
   -- outline plugin
   {
     "hedyhli/outline.nvim",
     lazy = true,
-    cmd = {"Outline", "OutlineOpen"},
+    cmd = { "Outline", "OutlineOpen" },
     keys = {
-      { "<leader>o", "<cmd>Outline<CR>", desc = "Toggle Outline"},
+      { "<leader>o", "<cmd>Outline<CR>", desc = "Toggle Outline" },
     },
     opts = {
       -- options here
     },
     config = function()
-      require("outline").setup({
+      require("outline").setup {
         outline_window = {
           width = 14,
         },
-      })
-    end
+      }
+    end,
   },
 
   -- Markdown (Notetaking) stuff:
   {
-    'lervag/lists.vim', -- lists
+    "lervag/lists.vim", -- lists
     lazy = false,
-    init = function ()
-      vim.g.lists_filetypes = {'markdown'}
-      return require("configs.lists-vim")
-    end
+    init = function()
+      vim.g.lists_filetypes = { "markdown" }
+      return require "configs.lists-vim"
+    end,
   },
 
   -- Terminal markdown previewer
@@ -66,10 +78,10 @@ return {
   {
     "lervag/wiki.vim",
     lazy = false, -- This is only needed if you specified lazy to be the
-                  -- default, see `:help lazy.nvim` and the LAZY LOADING
-                  -- section.
+    -- default, see `:help lazy.nvim` and the LAZY LOADING
+    -- section.
     init = function()
-      return require("configs.wiki-vim")
+      return require "configs.wiki-vim"
     end,
   },
 
@@ -80,7 +92,7 @@ return {
     --enables autocomplete for opts
     --@module "auto-session"
     --@type AutoSession.Config
-    opts = require("configs.auto-session"),
+    opts = require "configs.auto-session",
   },
 
   -- Debugger stuff
@@ -157,14 +169,20 @@ return {
   -- { import = "nvchad.blink.lazyspec" },
 
   {
-  	"nvim-treesitter/nvim-treesitter",
-  	opts = {
-  		ensure_installed = {
-  			"vim", "lua", "vimdoc",
-       "html", "css", "python",
-        "cpp", "c", "luadoc",
-      "printf",
-  		},
-  	},
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      ensure_installed = {
+        "vim",
+        "lua",
+        "vimdoc",
+        "html",
+        "css",
+        "python",
+        "cpp",
+        "c",
+        "luadoc",
+        "printf",
+      },
+    },
   },
 }

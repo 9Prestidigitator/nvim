@@ -19,7 +19,7 @@ local header = {
   [[                                                                       ]],
   [[                                                                       ]],
   [[                                                                       ]],
-  [[                             Praveen Kumar                             ]],
+  [[                                                                       ]],
 }
 
 dashboard.section.header.val = header
@@ -29,7 +29,10 @@ dashboard.section.buttons.val = {
   dashboard.button("f", "   Find file", ":Telescope find_files previewer=false<CR>"),
   dashboard.button("w", "󰱼   Find word", ":Telescope live_grep<CR>"),
   dashboard.button("r", "   Recent", ":Telescope oldfiles<CR>"),
-  dashboard.button("c", "   Config", ":e $MYVIMRC <CR>"),
+  dashboard.button("d", "   Change Directory", ":CdAndRestore<CR>"),
+  dashboard.button("i", "󰈙   Wiki", ":WikiIndex<CR>"),
+  dashboard.button("c", "   Config", ":cd ~/.config/nvim | SessionRestore<CR>"),
+  -- dashboard.button("c", "   Config", "e $MYVIMRC <CR>"),
   dashboard.button("l", "󰒲   Lazy", ":Lazy<CR>"),
   dashboard.button("m", "󱌣   Mason", ":Mason<CR>"),
   dashboard.button("q", "   Quit NVIM", ":qa<CR>"),

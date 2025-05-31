@@ -30,7 +30,7 @@ dashboard.section.buttons.val = {
   dashboard.button("d", "   Recent Directories", ":SessionSearch<CR>"),
   dashboard.button("f", "   Find file", ":Telescope find_files previewer=false<CR>"),
   dashboard.button("w", "󰱼   Find word", ":Telescope live_grep<CR>"),
-  dashboard.button("i", "󰈙   Wiki", ":WikiIndex<CR>"),
+  -- dashboard.button("i", "󰈙   Wiki", ":WikiIndex<CR>"),
   dashboard.button("c", "   Config", ":cd ~/.config/nvim | SessionRestore<CR>"),
   -- dashboard.button("c", "   Config", "e $MYVIMRC <CR>"),
   dashboard.button("l", "󰒲   Lazy", ":Lazy<CR>"),

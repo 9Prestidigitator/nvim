@@ -204,4 +204,9 @@ return {
       },
     },
   },
+
+  -- Vimtex latex luaSnips snippets
+  {
+    "evesdropper/luasnip-latex-snippets.nvim",
+  },
 }

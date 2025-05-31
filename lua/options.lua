@@ -30,3 +30,7 @@ end, {})
 
 -- local o = vim.o
 -- o.cursorlineopt ='both' -- to enable cursorline!
+
+-- require("luasnip.loaders.from_lua").lazy_load({
+--   paths = { "~/.config/nvim/lua/snippets" },
+-- })

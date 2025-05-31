@@ -53,28 +53,27 @@ return {
     end,
   },
 
-  -- Markdown (Notetaking) stuff:
+  -- Surround plugin
   {
-    "lervag/lists.vim", -- lists
-    lazy = false,
-    init = function()
-      vim.g.lists_filetypes = { "markdown" }
-      return require "configs.lists-vim"
+    "kylechui/nvim-surround",
+    version = "^3.0.0", -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
+    config = function()
+      require("nvim-surround").setup {
+        -- Configuration here, or leave empty to use defaults
+      }
     end,
   },
 
-  -- Terminal markdown previewer
+  -- neorg: notetaking plugin
   {
-    "OXY2DEV/markview.nvim",
-    lazy = false,
-    -- For blink.cmp's completion
-    -- source
-    -- dependencies = {
-    --     "saghen/blink.cmp"
-    -- },
+    "nvim-neorg/neorg",
+    lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
+    version = "*", -- Pin Neorg to the latest stable release
+    config = true,
   },
 
-  -- Neovim Wiki for markdown links and notetaking
+  -- For markdown links and notetaking
   {
     "lervag/wiki.vim",
     lazy = false, -- This is only needed if you specified lazy to be the
@@ -85,12 +84,24 @@ return {
     end,
   },
 
-  -- neorg
+  -- Markdown lists
   {
-    "nvim-neorg/neorg",
-    lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
-    version = "*", -- Pin Neorg to the latest stable release
-    config = true,
+    "lervag/lists.vim", -- lists
+    lazy = false,
+    init = function()
+      return require "configs.lists-vim"
+    end,
+  },
+
+  -- Markdown previewer
+  {
+    "OXY2DEV/markview.nvim",
+    lazy = false,
+    -- For blink.cmp's completion
+    -- source
+    -- dependencies = {
+    --     "saghen/blink.cmp"
+    -- },
   },
 
   -- Save and Load buffers automatically for each directory

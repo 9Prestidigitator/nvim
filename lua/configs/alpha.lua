@@ -20,8 +20,6 @@ local header = {
   [[                                                                       ]],
   [[                                                                       ]],
   [[                                                                       ]],
-  [[                                                                       ]],
-  [[                                                                       ]],
 }
 
 dashboard.section.header.val = header

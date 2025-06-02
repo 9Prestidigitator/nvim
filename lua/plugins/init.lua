@@ -21,6 +21,11 @@ return {
     end,
   },
 
+  -- Notifications
+  {
+   "rcarriga/nvim-notify",
+  },
+
   -- repl
   {
     -- "Vigemus/iron.nvim",

@@ -2,6 +2,8 @@ local core = require "iron.core"
 local ll = require "iron.lowlevel"
 local marks = require "iron.marks"
 
+vim.notify = require("notify")
+
 function ensure_open()
   -- FYI based on https://github.com/g0t4/iron.nvim/blob/d8c2869/lua/iron/core.lua#L254-L274
   local meta = vim.b[0].repl

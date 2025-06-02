@@ -14,6 +14,13 @@ vim.o.foldenable = true
 -- relative line numbers
 vim.opt.relativenumber = true
 vim.opt.scrolloff = 1
+vim.opt.termguicolors = true
+
+-- notifications
+vim.notify = require("notify")
+require("notify").setup({
+  background_color="#000000",
+})
 
 -- change directory and restore previous buffers 
 vim.api.nvim_create_user_command("CdAndRestore", function()

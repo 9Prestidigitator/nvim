@@ -7,7 +7,7 @@ vim.o.foldmethod = "expr"
 vim.o.foldexpr = "nvim_treesitter#foldexpr()"
 
 -- notifications
-vim.notify = require("notify")
+vim.notify = require "notify"
 
 -- Optional: start with folds open
 vim.o.foldlevel = 99

@@ -91,6 +91,10 @@ M.base46 = {
       italic = true,
       fg = "#a6adc8",
     },
+    Visual = {
+      fg = "#383c4a",
+      bg = "#e8f6f8",
+    },
   },
 }
 

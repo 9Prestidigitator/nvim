@@ -211,6 +211,7 @@ return {
         "c",
         "luadoc",
         "printf",
+        "c_sharp",
       },
     },
   },

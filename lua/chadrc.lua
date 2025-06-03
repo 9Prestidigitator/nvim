@@ -104,6 +104,10 @@ M.mason = {
     "mypy",
     "ruff",
     "debugpy",
+    "csharp-language-server",
+    "csharpier",
+    "omnisharp",
+    "netcoredbg"
   },
 }
 

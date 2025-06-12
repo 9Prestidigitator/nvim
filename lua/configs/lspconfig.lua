@@ -83,6 +83,12 @@ lspconfig.omnisharp.setup {
   analyze_open_documents_only = false,
 }
 
+-- Matlab
+lspconfig.matlab_ls.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
+
 -- Rust
 -- require('lspconfig').ruff.setup({
 --   init_options = {

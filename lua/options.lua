@@ -19,6 +19,15 @@ vim.opt.relativenumber = true
 vim.opt.scrolloff = 1
 vim.opt.termguicolors = true
 
+-- Make nvim-tree change the whole working directory of current instance
+require("nvim-tree").setup({
+  actions = {
+    change_dir = {
+      global = true,
+    },
+  },
+})
+
 -- local o = vim.o
 -- o.cursorlineopt ='both' -- to enable cursorline!
 

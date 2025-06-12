@@ -53,6 +53,11 @@ M.base46 = {
     bold = false,
   }),
 
+  vim.api.nvim_set_hl(0, "Cursor", {
+    fg = "#383c4a",
+    bg = "#e8f6f8",
+  }),
+
   hl_override = {
     -- Change Window Separator color
     WinSeparator = {
@@ -93,6 +98,10 @@ M.base46 = {
     },
     Visual = {
       fg = "#383c4a",
+      bg = "#BBC5C7",
+    },
+    Cursor = {
+      fg = "#383c4a",
       bg = "#e8f6f8",
     },
   },
@@ -111,7 +120,8 @@ M.mason = {
     "csharp-language-server",
     "csharpier",
     "omnisharp",
-    "netcoredbg"
+    "netcoredbg",
+    "matlab-language-server",
   },
 }
 

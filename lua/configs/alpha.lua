@@ -25,7 +25,7 @@ local header = {
 dashboard.section.header.val = header
 
 dashboard.section.buttons.val = {
-  dashboard.button("e", "   File explorer", ":NvimTreeToggle <CR>"),
+  dashboard.button("e", "   File explorer", ":Alpha | NvimTreeFocus<CR>"),
   dashboard.button("r", "   Recent", ":Telescope oldfiles<CR>"),
   dashboard.button("d", "   Recent Directories", ":SessionSearch<CR>"),
   dashboard.button("f", "   Find file", ":Telescope find_files previewer=false<CR>"),

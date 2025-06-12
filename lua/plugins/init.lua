@@ -24,6 +24,7 @@ return {
   -- Notifications
   {
     "rcarriga/nvim-notify",
+    lazy = false,
     config = function()
       require("notify").setup {
         background_colour = "#000000",
@@ -77,7 +78,9 @@ return {
     "nvim-neorg/neorg",
     lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
     version = "*", -- Pin Neorg to the latest stable release
-    config = true,
+    config = function()
+      return require "configs.neorg"
+    end,
   },
 
   -- For markdown links and notetaking
@@ -92,12 +95,18 @@ return {
   },
 
   -- Animations
-  {
-    "rachartier/tiny-glimmer.nvim",
-    event = "VeryLazy",
-    priority = 10, -- Needs to be a really low priority, to catch others plugins keybindings.
-    opts = require "configs.tiny-glimmer",
-  },
+  -- This one has an issue: the best animation shown off, left_to_right, does not work.
+  -- {
+  --   "rachartier/tiny-glimmer.nvim",
+  --   event = "VeryLazy",
+  --   priority = 10, -- Needs to be a really low priority, to catch others plugins keybindings.
+  --   -- opts = {
+  --   --   require "configs.tiny-glimmer",
+  --   -- },
+  --   init = function()
+  --     require("configs.tiny-glimmer")
+  --   end,
+  -- },
 
   {
     "sphamba/smear-cursor.nvim",
@@ -115,12 +124,40 @@ return {
         -- trailing_stiffness = 0.25,
         -- -- trailing_exponent = 0.1,
         -- -- gamma = 1,
-        min_horizontal_distance_smear = 10,
+        min_horizontal_distance_smear = 4,
         min_vertical_distance_smear = 2,
 
         -- cursor_color = require("theme").get_colors().text,
         -- transparent_bg_fallback_color = require("theme").get_colors().base,
       }
+    end,
+  },
+
+  {
+    "echasnovski/mini.animate",
+    event = "VeryLazy",
+    version = false,
+    config = function()
+      return require "configs.mini-animate"
+    end,
+  },
+
+  -- Database query extension
+  {
+    "kristijanhusak/vim-dadbod-ui",
+    dependencies = {
+      { "tpope/vim-dadbod", lazy = true },
+      { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true }, -- Optional
+    },
+    cmd = {
+      "DBUI",
+      "DBUIToggle",
+      "DBUIAddConnection",
+      "DBUIFindBuffer",
+    },
+    init = function()
+      -- Your DBUI configuration
+      vim.g.db_ui_use_nerd_fonts = 1
     end,
   },
 
@@ -157,8 +194,12 @@ return {
   -- Debugger stuff
   {
     "rcarriga/nvim-dap-ui",
-    event = "VeryLazy",
-    dependencies = { "nvim-neotest/nvim-nio" },
+    lazy = true,
+    -- event = "VeryLazy",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+      "nvim-neotest/nvim-nio",
+    },
     config = function()
       return require "configs.nvim-dap-ui"
     end,
@@ -167,6 +208,18 @@ return {
   {
     "jay-babu/mason-nvim-dap.nvim",
     event = "VeryLazy",
+  },
+
+  -- Testing utility
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "Issafalcon/neotest-dotnet",
+    },
   },
 
   {
@@ -187,6 +240,15 @@ return {
     "mfussenegger/nvim-dap",
     config = function()
       return require "configs.nvim-dap"
+    end,
+  },
+
+  -- Virtual Environment manager
+  {
+    "AckslD/swenv.nvim",
+    lazy = true,
+    config = function()
+      require("swenv").setup {}
     end,
   },
 
@@ -242,6 +304,7 @@ return {
         "luadoc",
         "printf",
         "c_sharp",
+        "norg",
       },
     },
   },

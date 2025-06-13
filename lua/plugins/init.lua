@@ -194,8 +194,8 @@ return {
   -- Debugger stuff
   {
     "rcarriga/nvim-dap-ui",
-    lazy = true,
-    -- event = "VeryLazy",
+    -- lazy = true,
+    event = "VeryLazy",
     dependencies = {
       "mfussenegger/nvim-dap",
       "nvim-neotest/nvim-nio",
@@ -240,15 +240,6 @@ return {
     "mfussenegger/nvim-dap",
     config = function()
       return require "configs.nvim-dap"
-    end,
-  },
-
-  -- Virtual Environment manager
-  {
-    "AckslD/swenv.nvim",
-    lazy = true,
-    config = function()
-      require("swenv").setup {}
     end,
   },
 

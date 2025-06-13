@@ -1,5 +1,4 @@
-
-local neorg = require("neorg")
+local neorg = require "neorg"
 
 neorg.setup {
   load = {
@@ -8,8 +7,15 @@ neorg.setup {
     ["core.summary"] = {},
     ["core.completion"] = {
       config = {
-        engine = "nvim-cmp"
-      }
-    }
-  }
+        engine = "nvim-cmp",
+      },
+    },
+    ["core.dirman"] = { -- Manages Neorg workspaces
+      config = {
+        workspaces = {
+          notes = "~/notes",
+        },
+      },
+    },
+  },
 }

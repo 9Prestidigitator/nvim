@@ -94,7 +94,7 @@ return {
     end,
   },
 
-  -- Animations
+  -- Movement animations
   -- This one has an issue: the best animation shown off, left_to_right, does not work.
   -- {
   --   "rachartier/tiny-glimmer.nvim",
@@ -108,6 +108,7 @@ return {
   --   end,
   -- },
 
+  -- Animations
   {
     "sphamba/smear-cursor.nvim",
     event = "VeryLazy",

@@ -33,7 +33,7 @@ require('tiny-glimmer').setup({
         -- It will try to automatically use what you already defined before.
         yank = {
               enabled = true,
-              -- default_animation = "fade",
+              default_animation = "left_to_right",
         },
         search = {
             enabled = false,

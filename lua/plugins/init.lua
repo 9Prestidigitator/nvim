@@ -94,20 +94,6 @@ return {
     end,
   },
 
-  -- Movement animations
-  -- This one has an issue: the best animation shown off, left_to_right, does not work.
-  -- {
-  --   "rachartier/tiny-glimmer.nvim",
-  --   event = "VeryLazy",
-  --   priority = 10, -- Needs to be a really low priority, to catch others plugins keybindings.
-  --   -- opts = {
-  --   --   require "configs.tiny-glimmer",
-  --   -- },
-  --   init = function()
-  --     require("configs.tiny-glimmer")
-  --   end,
-  -- },
-
   -- Animations
   {
     "sphamba/smear-cursor.nvim",
@@ -142,6 +128,19 @@ return {
       return require "configs.mini-animate"
     end,
   },
+
+  -- Movement animations
+  -- {
+  --   "rachartier/tiny-glimmer.nvim",
+  --   event = "VeryLazy",
+  --   priority = 10, -- Needs to be a really low priority, to catch others plugins keybindings.
+  --   -- opts = {
+  --   --   require "configs.tiny-glimmer",
+  --   -- },
+  --   init = function()
+  --     require("configs.tiny-glimmer")
+  --   end,
+  -- },
 
   -- Database query extension
   {

@@ -28,16 +28,27 @@ dap.configurations.python = {
   },
 }
 
-dap.configurations.cpp = {
-  {
-    type = "codelldb",
-    request = "launch",
-    name = "Launch CPP",
-    program = function()
-      return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
-    end,
-  },
+local is_juce_proj = vim.fn.glob "*.jucer" ~= ""
+
+local juce_config = {
+  name = "Launch JUCE AudioPluginHost",
+  type = "codelldb",
+  request = "launch",
+  program = "~/JUCE/extras/AudioPluginHost/Builds/LinuxMakefile/build/AudioPluginHost",
+  args = {},
+  runInTerminal = true,
 }
+
+local default_cpp = {
+  name = "Launch CPP Binary",
+  type = "codelldb",
+  request = "launch",
+  program = function()
+    return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+  end,
+}
+
+dap.configurations.cpp = is_juce_proj and { juce_config } or { default_cpp }
 
 dap.adapters.codelldb = {
   name = "codelldb server",

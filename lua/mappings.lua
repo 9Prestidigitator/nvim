@@ -3,7 +3,7 @@ require "nvchad.mappings"
 -- add yours here
 local map = vim.keymap.set
 -- These are some silly ones, rarely useful
-map("n", ";", ":", { desc = "CMD enter command mode" })
+-- map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
 -- Go to alpha
@@ -38,3 +38,24 @@ map("n", "<leader>dpr", function()
 end, { desc = "Debug Python method" })
 
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
+
+-- Error navigation
+map("n", "gen", function()
+  vim.diagnostic.goto_next()
+end, { desc = "Go to next error." })
+map("n", "gep", function()
+  vim.diagnostic.goto_prev()
+end, { desc = "Go to previous  error." })
+
+-- buffer navigation
+map("n", "gbl", function()
+  require("nvchad.tabufline").move_buf(1)
+end, { desc = "Move current tab to the right" })
+map("n", "gbh", function()
+  require("nvchad.tabufline").move_buf(-1)
+end, { desc = "Move current tab to the left" })
+
+-- tab navigation
+map("n", "gtn", "<cmd> tabnext <cr>", { desc = "Go to next tab" })
+map("n", "gtp", "<cmd> tabprevious <cr>", { desc = "Go to previous tab" })
+map("n", "gtc", "<cmd> tabnew <cr>", { desc = "Create new tab" })

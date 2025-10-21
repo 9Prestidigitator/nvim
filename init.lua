@@ -6,6 +6,7 @@ vim.o.backup = false      -- Don't create backup files
 vim.o.writebackup = false -- Don't create backup before writing
 vim.o.undofile = true
 vim.o.swapfile = false
+vim.o.showmode = false
 
 vim.o.number = true
 vim.o.relativenumber = true
@@ -98,6 +99,8 @@ vim.pack.add({
     { src = "https://github.com/stevearc/oil.nvim" },         -- File Explorer
     { src = "https://github.com/goolord/alpha-nvim" },
     { src = "https://github.com/kdheepak/lazygit.nvim" },
+    { src = "https://github.com/nvim-lualine/lualine.nvim" },
+    { src = "https://github.com/lewis6991/gitsigns.nvim" },
 })
 
 require("mini.pick").setup({
@@ -153,16 +156,27 @@ local logo = [[
 dashboard.section.header.val = vim.split(logo, "\n")
 dashboard.section.buttons.val = {
     dashboard.button("n", " " .. " New file", [[<cmd> ene <BAR> startinsert <cr>]]),
-    dashboard.button("d", " " .. " Sessions", [[<cmd>AutoSession search<cr>]]),
-    dashboard.button("e", " " .. " File explorer", ":Oil<CR>"),
-    dashboard.button("f", " " .. " Find file", "<cmd>Pick files<cr>"),
     dashboard.button("r", " " .. " Recent files", [[<cmd>PickRecentFiles<cr>]]),
+    dashboard.button("d", " " .. " Recent Sessions", [[<cmd>AutoSession search<cr>]]),
     dashboard.button("g", " " .. " Find text", [[<cmd>Pick grep_live<cr>]]),
+    dashboard.button("f", " " .. " Find file", "<cmd>Pick files<cr>"),
+    dashboard.button("e", " " .. " File explorer", ":Oil<CR>"),
     dashboard.button("c", " " .. " Config", "<cmd>cd ~/.config/nvim | AutoSession restore<cr>"),
     dashboard.button("q", " " .. " Quit", "<cmd> qa <cr>"),
 }
 dashboard.opts.cursorline = false
 require("alpha").setup(dashboard.opts)
+require("lualine").setup({
+    theme = "nord",
+    options = {
+        component_separators = { left = '', right = '' },
+        section_separators = { left = '', right = '' },
+    },
+    sections = {
+        lualine_a = { 'mode' },
+    }
+})
+require("gitsigns").setup()
 require("smear_cursor").setup()
 require("smear_cursor").enabled = true
 require("vague").setup({ transparent = true })

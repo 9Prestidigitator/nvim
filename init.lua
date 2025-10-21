@@ -224,15 +224,15 @@ require("which-key").setup({
 -- ]]
 
 local map = vim.keymap.set
-map("n", "<A-h>", "<C-w>h", { silent = true })
-map("n", "<A-l>", "<C-w>l", { silent = true })
-map("n", "<A-j>", "<C-w>j", { silent = true })
-map("n", "<A-k>", "<C-w>k", { silent = true })
+map("n", "<C-h>", "<C-w>h", { silent = true })
+map("n", "<C-l>", "<C-w>l", { silent = true })
+map("n", "<C-j>", "<C-w>j", { silent = true })
+map("n", "<C-k>", "<C-w>k", { silent = true })
 
-map("n", "<C-j>", ":m .+1<CR>==", { desc = "Move line down.", silent = true })
-map("n", "<C-k>", ":m .-2<CR>==", { desc = "Move line up.", silent = true })
-map("v", "<C-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down." })
-map("v", "<C-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up." })
+map("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down.", silent = true })
+map("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up.", silent = true })
+map("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down." })
+map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up." })
 
 map("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Explorer" })
 map("n", "<leader>A", "<CMD>Alpha<CR>", { desc = "Home" })
@@ -245,6 +245,8 @@ map("n", "<leader>lf", vim.lsp.buf.format, { desc = "Format current file." })
 map("n", "<leader>lg", ":LazyGit<CR>", { desc = "Lazygit" })
 map("n", "<leader>bw", ":bw<CR>", { desc = "Delete Buffer." })
 map("n", "<leader>bb", ":buffers!<CR>", { desc = "Show all buffers." })
+map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer." })
+map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer." })
 
 map({ "n" }, "<leader>/", 'gcc', { desc = "Comment", silent = true })
 map({ "n" }, "<Esc>", "<CMD>noh<CR>", { silent = true })
@@ -253,6 +255,10 @@ map("n", "<C-s>", "<CMD>w<CR>", { desc = "Save (write) file." })
 map("i", "<C-s>", "<Esc>:w<CR>a", { desc = "Save (write) file." })
 map("v", "<", "<gv", { desc = "Indent left and reselect." })
 map("v", ">", ">gv", { desc = "Indent right and reselect." })
+map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
+map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
+map("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Half page up (centered)" })
 -- DAP Debugging commands
 map("n", "<leader>db", "<cmd> DapToggleBreakpoint <cr>", { desc = "Add breakpoint at line" })
 map("n", "<leader>dq", "<cmd> DapClearBreakpoints <cr>", { desc = "Clear all Breakpoints" })
@@ -263,14 +269,7 @@ map("n", "<leader>dj", "<cmd> DapStepInto <cr>", { desc = "Debugger: Step Into" 
 map("n", "<leader>dc", function()
     require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
 end, { desc = "Add conditional breakpoint" })
-map("n", "<leader>dx", function()
-    require("dap").terminate()
-    require("dap").disconnect()
-end, { desc = "Debugger: Quit" })
--- DAP Python debugging commands
-map("n", "<leader>dpr", function()
-    require("dap-python").test_method()
-end, { desc = "Debug Python method" })
+map("n", "<leader>dx", function() require("dap").terminate() require("dap").disconnect() end, { desc = "Debugger: Quit" })
 
 _G.term_win_id = nil         -- Store the window ID in a global variable to track it
 function _G.ToggleTerminal() -- This is the main function to toggle the terminal
@@ -453,7 +452,7 @@ require("mason-nvim-dap").setup({
 })
 
 -- [[
--- LOOK
+-- UI
 -- ]]
 
 vim.cmd("colorscheme vague")

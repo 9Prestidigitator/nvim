@@ -269,7 +269,10 @@ map("n", "<leader>dj", "<cmd> DapStepInto <cr>", { desc = "Debugger: Step Into" 
 map("n", "<leader>dc", function()
     require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
 end, { desc = "Add conditional breakpoint" })
-map("n", "<leader>dx", function() require("dap").terminate() require("dap").disconnect() end, { desc = "Debugger: Quit" })
+map("n", "<leader>dx", function()
+    require("dap").terminate()
+    require("dap").disconnect()
+end, { desc = "Debugger: Quit" })
 
 _G.term_win_id = nil         -- Store the window ID in a global variable to track it
 function _G.ToggleTerminal() -- This is the main function to toggle the terminal
@@ -446,10 +449,7 @@ dap.configurations.cs = {
     },
 }
 
-require("mason-nvim-dap").setup({
-    ensure_installed = { "netcoredbg", "debugpy", "codelldb" },
-    automatic_installation = true,
-})
+require("mason-nvim-dap").setup({ automatic_installation = true })
 
 -- [[
 -- UI

@@ -11,6 +11,8 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.wrap = true
 vim.o.cursorline = true
+vim.o.scrolloff = 2
+vim.o.sidescrolloff = 6
 
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4

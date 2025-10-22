@@ -293,10 +293,10 @@ map("n", "<leader>lf", function()
         vim.lsp.buf.format({ async = true }) -- Try conform first, fall back to LSP
     end
 end, { desc = "Format (Try conform first)" })
-map("n", "<leader>bw", ":bw<CR>", { desc = "Delete Buffer." })
+map("n", "<leader>bw", ":bw<CR>", { desc = "Wipeout Buffer." })
 map("n", "<leader>bx", ":bdelete<CR>", { desc = "Delete Buffer." })
-map("n", "<leader>bX", ":bdelete!<CR>", { desc = "Delete Buffer." })
-map("n", "<leader>bb", ":buffers<CR>", { desc = "Show all buffers." })
+map("n", "<leader>bX", ":bdelete!<CR>", { desc = "Force Delete Buffer." })
+map("n", "<leader>bb", ":buffers<CR>", { desc = "Show buffers." })
 map("n", "<leader>bB", ":buffers!<CR>", { desc = "Show all buffers." })
 map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer." })
 map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer." })

@@ -14,19 +14,22 @@ vim.o.wrap = true
 vim.o.scrolloff = 2
 vim.o.sidescrolloff = 6
 vim.o.cursorline = true
-local cursorline_exclude = { "alpha", "TelescopePrompt" }
+local cursorline_exclude = { "alpha", "TelescopePrompt", "oil" }
 local cursorline_group = vim.api.nvim_create_augroup("CursorLineControl", { clear = true })
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, { -- Disable in inactive windows
     group = cursorline_group,
     callback = function()
         local ft = vim.bo.filetype
         local excluded = vim.tbl_contains(cursorline_exclude, ft)
-        if not excluded and vim.bo.filetype ~= "" then
+        if excluded then
+            vim.opt_local.cursorline = false
+        else
             vim.opt_local.cursorline = true
         end
     end,
 })
 vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
+    group = cursorline_group,
     callback = function()
         vim.opt_local.cursorline = false
     end,
@@ -88,7 +91,7 @@ vim.pack.add({
 
     { src = "https://github.com/vague2k/vague.nvim" },        -- Theme
     { src = "https://github.com/sphamba/smear-cursor.nvim" }, --Animated Cursor
-
+    { src = "https://github.com/goolord/alpha-nvim" },
     { src = "https://github.com/rmagatti/auto-session" },     -- Saves sessions by directory
     { src = "https://github.com/nvim-mini/mini.pick" },       -- might replace with telescope, need to do some reading
     { src = "https://github.com/nvim-mini/mini.icons" },      -- Icons
@@ -97,10 +100,10 @@ vim.pack.add({
     { src = "https://github.com/folke/which-key.nvim" },      -- Because I'm a n00b
     { src = "https://github.com/windwp/nvim-autopairs" },     -- Saves a lot of time
     { src = "https://github.com/stevearc/oil.nvim" },         -- File Explorer
-    { src = "https://github.com/goolord/alpha-nvim" },
-    { src = "https://github.com/kdheepak/lazygit.nvim" },
+    { src = "https://github.com/SirZenith/oil-vcs-status" },
     { src = "https://github.com/nvim-lualine/lualine.nvim" },
     { src = "https://github.com/lewis6991/gitsigns.nvim" },
+    { src = "https://github.com/kdheepak/lazygit.nvim" },
 })
 
 require("mini.pick").setup({
@@ -119,7 +122,6 @@ vim.api.nvim_create_user_command('PickRecentFiles', function()
         return vim.fn.filereadable(f) == 1 -- Filter only readable files
     end, oldfiles)
     local items = vim.tbl_map(function(path)
-        local ext = vim.fn.fnamemodify(path, ':e')
         local icon, _ = icons.get('file', vim.fn.fnamemodify(path, ':t'))
         return string.format('%s %s', icon or ' ', path)
     end, files)
@@ -195,11 +197,54 @@ require("auto-session").setup({
 require("oil").setup(
     {
         default_file_explorer = true,
+        view_options = {
+            show_hidden = true,
+        },
+        win_options = {
+            signcolumn = "number",
+        },
         keymaps = {
             ["<leader>e"] = { "actions.close", mode = "n" },
         }
     }
 )
+-- require("oil-git").setup({
+--     highlights = {
+--         OilGitAdded = { fg = "#a6e3a1" },     -- green
+--         OilGitModified = { fg = "#f9e2af" },  -- yellow
+--         OilGitRenamed = { fg = "#cba6f7" },   -- purple
+--         OilGitUntracked = { fg = "#89b4fa" }, -- blue
+--         OilGitIgnored = { fg = "#6c7086" },
+--     }
+-- })
+local StatusType = require("oil-vcs-status.constant.status").StatusType
+require("oil-vcs-status").setup({
+    status_symbol = {
+        [StatusType.Added]               = "",
+        [StatusType.Copied]              = "󰆏",
+        [StatusType.Deleted]             = "",
+        [StatusType.Ignored]             = "",
+        [StatusType.Modified]            = "",
+        [StatusType.Renamed]             = "",
+        [StatusType.TypeChanged]         = "󰉺",
+        [StatusType.Unmodified]          = " ",
+        [StatusType.Unmerged]            = "",
+        [StatusType.Untracked]           = "",
+        [StatusType.External]            = "",
+
+        [StatusType.UpstreamAdded]       = "󰈞",
+        [StatusType.UpstreamCopied]      = "󰈢",
+        [StatusType.UpstreamDeleted]     = "",
+        [StatusType.UpstreamIgnored]     = " ",
+        [StatusType.UpstreamModified]    = "󰏫",
+        [StatusType.UpstreamRenamed]     = "",
+        [StatusType.UpstreamTypeChanged] = "󱧶",
+        [StatusType.UpstreamUnmodified]  = " ",
+        [StatusType.UpstreamUnmerged]    = "",
+        [StatusType.UpstreamUntracked]   = " ",
+        [StatusType.UpstreamExternal]    = "",
+    }
+})
 require("which-key").setup({
     preset = "helix",
     spec = {
@@ -208,11 +253,11 @@ require("which-key").setup({
             { "<leader>",  group = "Leader" },
             { "<leader>d", group = "Debug" },
             { "<leader>f", group = "Find" },
-            { "<leader>l", group = "LSP" },
             { "<leader>b", group = "Buffer" },
             { "[",         group = "prev" },
             { "]",         group = "next" },
             { "g",         group = "goto" },
+            { "gr",        group = "LSP" },
             { "ys",        group = "surround" },
             { "z",         group = "fold" },
         },
@@ -240,17 +285,29 @@ map("n", "<leader>fg", ":Pick grep_live<CR>", { desc = "Find via ripgrep." })
 map("n", "<leader>ff", ":Pick files<CR>", { desc = "Find file in directory." })
 map("n", "<leader>fb", ":Pick buffers<CR>", { desc = "Find buffers in session." })
 map("n", "<leader>fr", ":PickRecentFiles<CR>", { desc = "Find recent files." })
-map("n", "<leader>lr", vim.lsp.buf.rename, { desc = "Rename (LSP)." })
-map("n", "<leader>lf", vim.lsp.buf.format, { desc = "Format current file." })
+map("n", "<leader>fh", ":Pick help<CR>", { desc = "Find help." })
 map("n", "<leader>lg", ":LazyGit<CR>", { desc = "Lazygit" })
+map("n", "<leader>lf", function()
+    local conform = require('conform')
+    if not conform.format({ async = true, lsp_fallback = true }) then
+        vim.lsp.buf.format({ async = true }) -- Try conform first, fall back to LSP
+    end
+end, { desc = "Format (Try conform first)" })
 map("n", "<leader>bw", ":bw<CR>", { desc = "Delete Buffer." })
-map("n", "<leader>bb", ":buffers!<CR>", { desc = "Show all buffers." })
+map("n", "<leader>bx", ":bdelete<CR>", { desc = "Delete Buffer." })
+map("n", "<leader>bX", ":bdelete!<CR>", { desc = "Delete Buffer." })
+map("n", "<leader>bb", ":buffers<CR>", { desc = "Show all buffers." })
+map("n", "<leader>bB", ":buffers!<CR>", { desc = "Show all buffers." })
 map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer." })
 map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer." })
+map("n", "grf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format()" })
+map("n", "grd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition()" })
 
-map({ "n" }, "<leader>/", 'gcc', { desc = "Comment", silent = true })
+map({ "n" }, "<leader>/", "gcc", { desc = "Toggle Comment", remap = true })
+map({ "v" }, "<leader>/", "gc", { desc = "Toggle Comment", remap = true })
 map({ "n" }, "<Esc>", "<CMD>noh<CR>", { silent = true })
-map({ "n", "v", "x" }, "<leader>y", '"+y', { desc = "Yank to clipboard." })
+map({ "n", "v", "x" }, "<leader>y", '"+y', { desc = "Yank to clipboard" })
+map({ "n", "v", "x" }, "<leader>p", '"+p', { desc = "Paste from clipboard" })
 map("n", "<C-s>", "<CMD>w<CR>", { desc = "Save (write) file." })
 map("i", "<C-s>", "<Esc>:w<CR>a", { desc = "Save (write) file." })
 map("v", "<", "<gv", { desc = "Indent left and reselect." })
@@ -259,6 +316,37 @@ map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 map("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
 map("n", "<C-u>", "<C-u>zz", { desc = "Half page up (centered)" })
+map("i", "<C-h>", "<C-W>", { desc = "Delete word" })
+
+map('i', '<Tab>', function()
+    if vim.fn.pumvisible() == 1 then
+        return '<C-n>'
+    else
+        return '<Tab>'
+    end
+end, { expr = true })
+map('i', '<S-Tab>', function()
+    if vim.fn.pumvisible() == 1 then
+        return '<C-p>'
+    else
+        return '<S-Tab>'
+    end
+end, { expr = true })
+map('i', '<CR>', function()
+    if vim.fn.pumvisible() == 1 then
+        return '<C-y>'
+    else
+        return '<CR>'
+    end
+end, { expr = true })
+map('i', '<Esc>', function()
+    if vim.fn.pumvisible() == 1 then
+        return '<C-e>'
+    else
+        return '<Esc>'
+    end
+end, { expr = true })
+
 -- DAP Debugging commands
 map("n", "<leader>db", "<cmd> DapToggleBreakpoint <cr>", { desc = "Add breakpoint at line" })
 map("n", "<leader>dq", "<cmd> DapClearBreakpoints <cr>", { desc = "Clear all Breakpoints" })
@@ -275,17 +363,26 @@ map("n", "<leader>dx", function()
 end, { desc = "Debugger: Quit" })
 
 _G.term_win_id = nil         -- Store the window ID in a global variable to track it
+_G.term_buf_id = nil
 function _G.ToggleTerminal() -- This is the main function to toggle the terminal
     -- Check if the stored window ID is still valid
     if _G.term_win_id and vim.api.nvim_win_is_valid(_G.term_win_id) then
-        -- If it is, hide the window and clear our variable
+        -- Hide the window and clear our variable
         vim.api.nvim_win_hide(_G.term_win_id)
         _G.term_win_id = nil
     else
-        -- If not, create a new terminal
-        vim.cmd('botright 10split') -- Open a 10-line split at the bottom
-        vim.cmd('terminal')         -- Start a terminal in that new split
-        vim.cmd('startinsert')      -- Enter terminal-insert mode immediately
+        -- If not, create a new terminal (or reuse existing buffer)
+        vim.cmd('botright 12split')
+        -- Check if we have a valid terminal buffer stored
+        if _G.term_buf_id and vim.api.nvim_buf_is_valid(_G.term_buf_id) then
+            -- Reuse the existing terminal buffer
+            vim.api.nvim_win_set_buf(0, _G.term_buf_id)
+        else
+            -- Create a new terminal
+            vim.cmd('terminal')
+            _G.term_buf_id = vim.api.nvim_get_current_buf()
+        end
+        vim.cmd('startinsert')
         -- Store the new window's ID
         _G.term_win_id = vim.api.nvim_get_current_win()
     end
@@ -297,14 +394,14 @@ vim.api.nvim_create_autocmd('TermOpen', { -- Setup keymaps inside the terminal
         -- This is what you asked for:
         -- Map <Esc> to exit terminal-insert mode and go to terminal-normal mode
         -- { buffer = true } makes this map only apply to this terminal buffer
-        vim.keymap.set('t', '<C-x>', '<C-\\><C-n>', { buffer = ctx.buf, silent = true, desc = "Exit terminal mode" })
+        vim.keymap.set('t', '<C-x>', '<C-\\><C-n>',
+            { buffer = ctx.buf, silent = true, desc = "Exit terminal mode" })
         -- Optional: Also allow toggling *from* the terminal
         -- This map exits terminal mode, then calls the toggle function to close it
         vim.keymap.set('t', '<C-t>', '<C-\\><C-n><Cmd>lua _G.ToggleTerminal()<CR>',
             { buffer = ctx.buf, silent = true, desc = "Toggle terminal" })
     end,
 })
-
 -- Map a key in NORMAL mode to open/close the terminal
 vim.keymap.set('n', '<leader>t', _G.ToggleTerminal, { desc = "Toggle terminal" })
 
@@ -341,8 +438,20 @@ require("mason-lspconfig").setup({
     ensure_installed = lsps,
     automatic_installation = true,
 })
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+local on_attach = function(client, bufnr)
+    vim.lsp.completion.enable(true, client.id, bufnr, {
+        autotrigger = false,
+        convert = function(item)
+            return { abbr = item.label:gsub('%b()', '') }
+        end,
+    })
+    vim.keymap.set('i', '<C-Space>', function() vim.lsp.completion.get() end, { desc = "Toggle omni-completion." })
+end
 vim.lsp.enable(lsps)
 vim.lsp.config("lua_ls", {
+    capabilities = capabilities,
+    on_attach = on_attach,
     settings = {
         Lua = {
             workspace = {
@@ -351,7 +460,14 @@ vim.lsp.config("lua_ls", {
         },
     },
 })
+vim.lsp.config("clangd", {
+    capabilities = capabilities,
+    on_attach = on_attach,
+    filetypes = { "c", "cpp" }
+})
 vim.lsp.config("omnisharp", {
+    capabilities = capabilities,
+    on_attach = on_attach,
     cmd = {
         "dotnet",
         os.getenv("HOME") .. "/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll",
@@ -368,6 +484,20 @@ vim.lsp.config("omnisharp", {
     analyze_open_documents_only = false,
     filetypes = { "cs" },
 })
+vim.lsp.config("pyright", {
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = {
+        python = {
+            analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = "workspace",
+                useLibraryCodeForTypes = true,
+                typeCheckingMode = "basic" -- or "off", "strict"
+            }
+        }
+    }
+})
 
 -- DAP
 local dap = require("dap")
@@ -375,6 +505,7 @@ local dapui = require("dapui")
 dapui.setup()
 dap.listeners.after.event_initialized.dapui_config = function()
     dapui.open()
+    vim.keymap.set("n", "<leader>du", function() dapui.open({ reset = true }) end, { desc = "Reset DAP ui." })
 end
 dap.listeners.before.attach.dapui_config = function()
     dapui.open()
@@ -387,6 +518,7 @@ dap.listeners.before.event_terminated.dapui_config = function()
 end
 dap.listeners.before.event_exited.dapui_config = function()
     dapui.close()
+    vim.keymap.del("n", "<leader>du")
 end
 
 require("dap-python").setup(os.getenv("HOME") .. "/.local/share/nvim/mason/packages/debugpy/venv/bin/python")

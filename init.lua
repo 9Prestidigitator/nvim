@@ -136,8 +136,8 @@ require("cmp").setup({
 		["<C-b>"] = require("cmp").mapping.scroll_docs(-4),
 		["<C-f>"] = require("cmp").mapping.scroll_docs(4),
 		["<C-Space>"] = require("cmp").mapping.complete(),
-		["<Esc>"] = require("cmp").mapping.abort(),
-		["<CR>"] = require("cmp").mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+		["<C-e>"] = require("cmp").mapping.abort(),
+		["<C-y>"] = require("cmp").mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
 		["<Tab>"] = require("cmp").mapping(function(fallback)
 			if require("cmp").visible() then
 				require("cmp").select_next_item()

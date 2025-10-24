@@ -458,6 +458,7 @@ require("conform").setup({
 		bash = { "shfmt" },
 		lua = { "stylua" },
 		python = { "black" },
+		cs = { "csharpier" },
 		c = { "clang-format" },
 		cpp = { "clang-format" },
 		javascript = { "prettier" },

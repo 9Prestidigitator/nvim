@@ -37,7 +37,7 @@ vim.api.nvim_create_autocmd("TermOpen", { -- Setup keymaps inside the terminal
 	end,
 })
 
-local function add_paths(dir, opts)
+function AddPathsToConfig(dir, opts)
 	opts = opts or {}
 	local max_depth = opts.max_depth or 10
 	local exclude_patterns = opts.exclude or { "^%.", "node_modules", ".git" }

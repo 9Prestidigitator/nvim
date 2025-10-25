@@ -185,50 +185,44 @@ vim.api.nvim_create_user_command("PickRecentFiles", function()
 end, {})
 
 vim.api.nvim_create_user_command("PickKeymaps", function()
-  local pick = require("mini.pick")
-  local mode_names = {
-    n = "Normal",
-    i = "Insert",
-    v = "Visual",
-    x = "Visual",
-    s = "Select",
-    o = "Operator-pending",
-    c = "Command-line",
-    t = "Terminal",
-  }
-  local all_modes = { "n", "i", "v", "x", "s", "o", "c", "t" }
-  local items = {}
+	local pick = require("mini.pick")
+	local mode_names = {
+		n = "Normal",
+		i = "Insert",
+		v = "Visual",
+		x = "Visual",
+		s = "Select",
+		o = "Operator-pending",
+		c = "Command-line",
+		t = "Terminal",
+	}
+	local all_modes = { "n", "i", "v", "x", "s", "o", "c", "t" }
+	local items = {}
 
-  for _, mode in ipairs(all_modes) do
-    local maps = vim.api.nvim_get_keymap(mode)
-    for _, map in ipairs(maps) do
-      local mode_label = mode_names[mode] or mode
-      local desc = map.desc or ""
-      table.insert(items, string.format(
-        "[%s] %-15s → %-40s %s",
-        mode_label,
-        map.lhs,
-        map.rhs,
-        desc
-      ))
-    end
-  end
+	for _, mode in ipairs(all_modes) do
+		local maps = vim.api.nvim_get_keymap(mode)
+		for _, map in ipairs(maps) do
+			local mode_label = mode_names[mode] or mode
+			local desc = map.desc or ""
+			table.insert(items, string.format("[%s] %-15s → %-40s %s", mode_label, map.lhs, map.rhs, desc))
+		end
+	end
 
-  pick.start({
-    source = {
-      name = "Keymaps",
-      items = items,
-      choose = function(item)
-        local lhs = item:match("%] (%S+)")
-        vim.cmd("verbose map " .. lhs)
-      end,
-    },
-    window = {
-        config = {
-            width = 120
-        }
-    }
-  })
+	pick.start({
+		source = {
+			name = "Keymaps",
+			items = items,
+			choose = function(item)
+				local lhs = item:match("%] (%S+)")
+				vim.cmd("verbose map " .. lhs)
+			end,
+		},
+		window = {
+			config = {
+				width = 120,
+			},
+		},
+	})
 end, {})
 
 local dashboard = require("alpha.themes.dashboard")

@@ -24,19 +24,6 @@ function _G.ToggleTerminal() -- This is the main function to toggle the terminal
 	end
 end
 
-vim.api.nvim_create_autocmd("TermOpen", { -- Setup keymaps inside the terminal
-	pattern = "*",
-	callback = function(ctx)
-		vim.keymap.set("t", "<C-x>", "<C-\\><C-n>", { buffer = ctx.buf, silent = true, desc = "Exit terminal mode" })
-		vim.keymap.set(
-			"t",
-			"<C-t>",
-			"<C-\\><C-n><Cmd>lua _G.ToggleTerminal()<CR>",
-			{ buffer = ctx.buf, silent = true, desc = "Toggle terminal" }
-		)
-	end,
-})
-
 function AddPathsToConfig(dir, opts)
 	opts = opts or {}
 	local max_depth = opts.max_depth or 10

@@ -20,3 +20,16 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
 		vim.opt_local.cursorline = false
 	end,
 })
+
+vim.api.nvim_create_autocmd("TermOpen", { -- Setup keymaps inside the terminal
+	pattern = "*",
+	callback = function(ctx)
+		vim.keymap.set("t", "<C-x>", "<C-\\><C-n>", { buffer = ctx.buf, silent = true, desc = "Exit terminal mode" })
+		vim.keymap.set(
+			"t",
+			"<C-t>",
+			"<C-\\><C-n><Cmd>lua _G.ToggleTerminal()<CR>",
+			{ buffer = ctx.buf, silent = true, desc = "Toggle terminal" }
+		)
+	end,
+})

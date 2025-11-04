@@ -17,6 +17,7 @@ vim.pack.add({
 	{ src = "https://github.com/sphamba/smear-cursor.nvim" }, --Animated Cursor
 	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
 	{ src = "https://github.com/nvim-mini/mini.icons" }, -- Icons
+    { src = "https://github.com/nvim-tree/nvim-web-devicons" }, -- webdev icons
 	{ src = "https://github.com/folke/which-key.nvim" }, -- Because I'm a n00b
 
 	{ src = "https://github.com/goolord/alpha-nvim" },
@@ -55,6 +56,7 @@ require("vague").setup({ transparent = true })
 require("nvim-surround").setup()
 require("nvim-autopairs").setup()
 require("mini.icons").setup()
+require("nvim-web-devicons").setup()
 require("gitsigns").setup()
 require("lazydev").setup()
 

@@ -57,8 +57,18 @@ dap.adapters.codelldb = {
 		args = { "--port", "${port}" },
 	},
 }
+
 dap.configurations.cpp = {
 	name = "Debug c++ binary",
+	type = "codelldb",
+	request = "launch",
+	program = function()
+		return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+	end,
+}
+
+dap.configurations.rust = {
+	name = "Debug rust binary",
 	type = "codelldb",
 	request = "launch",
 	program = function()

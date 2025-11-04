@@ -5,7 +5,7 @@ local lsps = {
 	"pyright", -- Python LSP
 	"clangd", -- c/c++ LSP
 	"omnisharp", -- c# LSP
-	"bacon_ls", -- rust LSP
+	"rust_analyzer", -- rust LSP
 }
 
 require("mason-lspconfig").setup({
@@ -66,3 +66,13 @@ vim.lsp.config("pyright", {
 	},
 })
 
+vim.lsp.config("rust_analyzer", {
+	settings = {
+		["rust-analyzer"] = {
+			cargo = { allFeatures = true },
+			checkOnSave = {
+				command = "clippy",
+			},
+		},
+	},
+})

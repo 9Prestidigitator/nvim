@@ -49,8 +49,14 @@ map("n", "<C-u>", "<C-u>zz", { desc = "Half page up (centered)" })
 map("i", "<C-h>", "<C-W>", { desc = "Delete word" })
 map("n", "<A-m>", function()
 	local line = vim.api.nvim_get_current_line()
-	local mid = math.floor(#line / 2)
-	vim.api.nvim_win_set_cursor(0, { vim.api.nvim_win_get_cursor(0)[1], mid })
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	local first_char = line:find("%S")
+	if first_char then
+		local trimmed = line:match("^%s*(.-)%s*$")
+		local content_len = #trimmed
+		local center_col = first_char + math.floor(content_len / 2) - 1
+		vim.api.nvim_win_set_cursor(0, { row, center_col })
+	end
 end, { desc = "Cursor to center of line" })
 
 -- DAP Debugging commands

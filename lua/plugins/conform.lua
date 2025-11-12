@@ -13,8 +13,8 @@ require("conform").setup({
 		toml = { "taplo" },
 		markdown = { "prettierd" },
 		css = { "prettierd" },
-		yaml = { "prettierd" },
 		html = { "prettierd" },
+        yaml = { "prettierd" },
 	},
 })
 

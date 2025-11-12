@@ -31,6 +31,7 @@ vim.pack.add({
 	{ src = "https://github.com/kdheepak/lazygit.nvim" },
 	{ src = "https://github.com/folke/lazydev.nvim" }, -- Makes lua development much better
 
+    { src = "https://github.com/j-hui/fidget.nvim" },
 	{ src = "https://github.com/hrsh7th/nvim-cmp" },
 	{ src = "https://github.com/hrsh7th/cmp-nvim-lsp" },
 	{ src = "https://github.com/hrsh7th/cmp-buffer" },
@@ -52,6 +53,7 @@ require("plugins.which-key")
 require("plugins.auto-sessions")
 require("plugins.smear-cursor")
 
+require("fidget").setup()
 require("vague").setup({ transparent = true })
 require("nvim-surround").setup()
 require("nvim-autopairs").setup()

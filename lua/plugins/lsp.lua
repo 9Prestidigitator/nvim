@@ -2,7 +2,8 @@ require("mason-lspconfig").setup({
 	ensure_installed = {
 		"lua_ls", -- lua LSP
 		"bashls", -- bash LSP
-		"pyright", -- Python LSP
+		"basedpyright", -- Python LSP
+		"ruff", -- Extra Python functionality
 		"clangd", -- c/c++ LSP
 		"omnisharp", -- c# LSP
 		"rust_analyzer", -- rust LSP
@@ -12,10 +13,19 @@ require("mason-lspconfig").setup({
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+local on_attach = function(client, bufnr)
+	local bufopts = { noremap = true, silent = true, buffer = bufnr }
+	vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
+	vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
+	vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
+	vim.keymap.set("n", "<C-K>", vim.lsp.buf.signature_help, bufopts)
+end
+
 vim.lsp.enable({
 	"lua_ls", -- lua LSP
 	"bashls", -- bash LSP
-	"pyright", -- Python LSP
+	"basedpyright", -- Python LSP
+	"ruff", -- Extra Python functionality
 	"clangd", -- c/c++ LSP
 	"omnisharp", -- c# LSP
 	"rust_analyzer", -- rust LSP
@@ -24,6 +34,7 @@ vim.lsp.enable({
 
 vim.lsp.config("lua_ls", {
 	capabilities = capabilities,
+	on_attach = on_attach,
 	settings = {
 		Lua = {
 			workspace = {
@@ -33,13 +44,35 @@ vim.lsp.config("lua_ls", {
 	},
 })
 
+vim.lsp.config("rust_analyzer", {
+    capabilities = capabilities,
+    on_attach = on_attach,
+})
+
 vim.lsp.config("clangd", {
 	capabilities = capabilities,
+	on_attach = on_attach,
 	filetypes = { "c", "cpp" },
+})
+
+vim.lsp.config("basedpyright", {
+    capabilities = capabilities,
+    on_attach = on_attach,
+    settings = {
+        python = {
+            analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = "workspace",
+                useLibraryCodeForTypes = true,
+                typeCheckingMode = "basic", -- or "off", "strict"
+            },
+        },
+    },
 })
 
 vim.lsp.config("omnisharp", {
 	capabilities = capabilities,
+	on_attach = on_attach,
 	cmd = {
 		"dotnet",
 		os.getenv("HOME") .. "/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll",
@@ -57,16 +90,3 @@ vim.lsp.config("omnisharp", {
 	filetypes = { "cs" },
 })
 
-vim.lsp.config("pyright", {
-	capabilities = capabilities,
-	settings = {
-		python = {
-			analysis = {
-				autoSearchPaths = true,
-				diagnosticMode = "workspace",
-				useLibraryCodeForTypes = true,
-				typeCheckingMode = "basic", -- or "off", "strict"
-			},
-		},
-	},
-})

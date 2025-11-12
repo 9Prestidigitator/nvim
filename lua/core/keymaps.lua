@@ -31,6 +31,10 @@ map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer." })
 
 map("n", "grf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format()" })
 map("n", "grd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition()" })
+map("n", "grk", vim.lsp.buf.hover, { desc = "vim.lsp.buf.hover()" })
+map("n", "grw", function()
+	print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+end, { desc = "List LSP workspace folders." })
 
 map({ "n" }, "<leader>/", "gcc", { desc = "Toggle Comment", remap = true })
 map({ "v" }, "<leader>/", "gc", { desc = "Toggle Comment", remap = true })

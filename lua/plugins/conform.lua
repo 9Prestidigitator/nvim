@@ -8,6 +8,13 @@ require("conform").setup({
 		c = { "clang-format" },
 		cpp = { "clang-format" },
 		javascript = { "prettier" },
+		json = { "jq" },
+		nix = { "alejandra" },
+		toml = { "taplo" },
+		markdown = { "prettierd" },
+		css = { "prettierd" },
+		yaml = { "prettierd" },
+		html = { "prettierd" },
 	},
 })
 

@@ -8,6 +8,7 @@ require("conform").setup({
 		c = { "clang-format" },
 		cpp = { "clang-format" },
         nix = { "alejandra" },
+        matlab = { lsp_format = 'first' },
 		javascript = { "prettier" },
 		json = { "jq" },
 		toml = { "taplo" },

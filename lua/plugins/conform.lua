@@ -8,6 +8,7 @@ require("conform").setup({
 		c = { "clang-format" },
 		cpp = { "clang-format" },
 		javascript = { "prettier" },
+        -- nix = {"nixfmt"},
 	},
 })
 

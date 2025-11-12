@@ -1,21 +1,26 @@
--- LSP's
-local lsps = {
+require("mason-lspconfig").setup({
+	ensure_installed = {
+		"lua_ls", -- lua LSP
+		"bashls", -- bash LSP
+		"pyright", -- Python LSP
+		"clangd", -- c/c++ LSP
+		"omnisharp", -- c# LSP
+		"rust_analyzer", -- rust LSP
+	},
+	automatic_installation = true,
+})
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+vim.lsp.enable({
 	"lua_ls", -- lua LSP
 	"bashls", -- bash LSP
 	"pyright", -- Python LSP
 	"clangd", -- c/c++ LSP
 	"omnisharp", -- c# LSP
 	"rust_analyzer", -- rust LSP
-}
-
-require("mason-lspconfig").setup({
-	ensure_installed = lsps,
-	automatic_installation = true,
+	"nixd", -- nix LSP
 })
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-
-vim.lsp.enable(lsps)
 
 vim.lsp.config("lua_ls", {
 	capabilities = capabilities,

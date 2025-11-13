@@ -8,8 +8,10 @@ require("mason-lspconfig").setup({
 		"basedpyright", -- Python: type checking
 		"pyrefly", -- Python: autocompletion
 		"omnisharp", -- C# LSP
-		"texlab", -- Latex LSP
-		"matlab_ls", -- Matlab Lsp
+        "qmlls", -- QML LSP
+        "ts_ls", -- TS/JS LSP
+        "texlab", -- Latex LSP
+        "matlab_ls", -- Matlab LSP
 	},
 	automatic_installation = true,
 })
@@ -33,8 +35,10 @@ vim.lsp.enable({
 	"basedpyright", -- Python: type checking
 	"pyrefly", -- Python: autocompletion
 	"omnisharp", -- c# LSP
-	"texlab", -- Latex LSP
-	"matlab-ls", -- Matlab Lsp
+    "qmlls", -- QML LSP
+    "ts_ls", -- TS/JS LSP
+    "texlab", -- Latex LSP
+    "matlab-ls", -- Matlab Lsp
 	"nixd", -- nix LSP
 })
 

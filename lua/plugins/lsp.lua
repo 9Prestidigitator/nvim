@@ -21,7 +21,7 @@ local on_attach = function(client, bufnr)
 	vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
 	vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
 	vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
-	vim.keymap.set("n", "<C-K>", vim.lsp.buf.signature_help, bufopts)
+	vim.keymap.set("n", "<C-S-k>", vim.lsp.buf.signature_help, bufopts)
 end
 
 vim.lsp.enable({

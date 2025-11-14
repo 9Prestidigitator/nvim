@@ -8,10 +8,10 @@ require("mason-lspconfig").setup({
 		"basedpyright", -- Python: type checking
 		"pyrefly", -- Python: autocompletion
 		"omnisharp", -- C# LSP
-        "qmlls", -- QML LSP
-        "ts_ls", -- TS/JS LSP
-        "texlab", -- Latex LSP
-        "matlab_ls", -- Matlab LSP
+		"qmlls", -- QML LSP
+		"ts_ls", -- TS/JS LSP
+		"texlab", -- Latex LSP
+		"matlab_ls", -- Matlab LSP
 	},
 	automatic_installation = true,
 })
@@ -35,10 +35,10 @@ vim.lsp.enable({
 	"basedpyright", -- Python: type checking
 	"pyrefly", -- Python: autocompletion
 	"omnisharp", -- c# LSP
-    "qmlls", -- QML LSP
-    "ts_ls", -- TS/JS LSP
-    "texlab", -- Latex LSP
-    "matlab-ls", -- Matlab Lsp
+	"qmlls", -- QML LSP
+	"ts_ls", -- TS/JS LSP
+	"texlab", -- Latex LSP
+	"matlab-ls", -- Matlab Lsp
 	"nixd", -- nix LSP
 })
 
@@ -202,12 +202,10 @@ vim.lsp.config("pyrefly", {
 					end
 				end
 			end
-
 			-- sort by creation time to check what is recent one
 			table.sort(processes, function(a, b)
 				return a.creation > b.creation
 			end)
-
 			return processes[1].pid
 		end
 	end,
@@ -325,4 +323,9 @@ vim.lsp.config("matlab-ls", {
 		},
 	},
 	single_file_support = false, -- if enabled, lsp(matlab.exe) attaches per file, too heavy
+})
+
+-- QML
+vim.lsp.config("qmlls", {
+	cmd = vim.fn.filereadable("etc/NIXOS") == 1 and { "/run/current-system/sw/bin/qmlls" } or { "qmlls" },
 })

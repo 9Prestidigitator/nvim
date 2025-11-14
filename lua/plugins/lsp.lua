@@ -327,5 +327,7 @@ vim.lsp.config("matlab-ls", {
 
 -- QML
 vim.lsp.config("qmlls", {
-	cmd = vim.fn.filereadable("/etc/NIXOS") == 1 and { "/run/current-system/sw/bin/qmlls" } or { "qmlls" },
+	capabilities = capabilities,
+	on_attach = on_attach,
+    cmd = vim.fn.filereadable("/etc/NIXOS") == 1 and { "/run/current-system/sw/bin/qmlls" } or { "qmlls" },
 })

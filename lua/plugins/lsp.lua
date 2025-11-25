@@ -6,7 +6,6 @@ require("mason-lspconfig").setup({
 		"clangd", -- c/c++ LSP
 		"ruff", -- Python: Code actions, formatting
 		"basedpyright", -- Python: type checking
-		"pyrefly", -- Python: autocompletion
 		"omnisharp", -- C# LSP
 		"qmlls", -- QML LSP
 		"ts_ls", -- TS/JS LSP
@@ -33,7 +32,6 @@ vim.lsp.enable({
 	"clangd", -- c/c++ LSP
 	"ruff", -- Python: Code actions, formatting
 	"basedpyright", -- Python: type checking
-	"pyrefly", -- Python: autocompletion
 	"omnisharp", -- c# LSP
 	"qmlls", -- QML LSP
 	"ts_ls", -- TS/JS LSP
@@ -69,19 +67,9 @@ vim.lsp.config("clangd", {
 })
 
 -- PYTHON
-local root_dir_ruff = function(bufnr, cb)
-	local root = vim.fs.root(bufnr, {
-		"pyproject.toml",
-		"ruff.toml",
-		".ruff.toml",
-		".git",
-	}) or vim.fn.expand("%:p:h")
-	cb(root)
-end
 vim.lsp.config("ruff", {
 	cmd = { "ruff", "server" },
 	filetypes = { "python" },
-	root_dir = root_dir_ruff,
 	on_attach = function(client, bufnr)
 		-- lsp use ruff to formatter
 		client.server_capabilities.documentFormattingProvider = false -- enable vim.lsp.buf.format()
@@ -114,117 +102,18 @@ vim.lsp.config("ruff", {
 	single_file_support = false,
 })
 
-local root_dir_basedpyright = function(bufnr, cb)
-	local root = vim.fs.root(bufnr, {
-		"pyproject.toml",
-		"pyrightconfig.json",
-		".git",
-	}) or vim.fn.expand("%:p:h")
-	cb(root)
-end
 vim.lsp.config("basedpyright", {
 	cmd = { "basedpyright-langserver", "--stdio" },
 	filetypes = { "python" },
-	root_dir = root_dir_basedpyright,
-	on_attach = function(client, _)
-		client.server_capabilities.completionProvider = false -- use pyrefly for fast response
-		client.server_capabilities.definitionProvider = false -- use pyrefly for fast response
-		client.server_capabilities.documentHighlightProvider = false -- use pyrefly for fast response
-		client.server_capabilities.renameProvider = false -- use pyrefly as I think it is stable
-		client.server_capabilities.semanticTokensProvider = false -- use pyrefly it is more rich
-	end,
-	settings = { -- see https://docs.basedpyright.com/latest/configuration/language-server-settings/
+	capabilities = capabilities,
+	on_attach = on_attach,
+	settings = {
 		basedpyright = {
-			disableOrganizeImports = true, -- use ruff instead of it
 			analysis = {
-				autoImportCompletions = true,
-				autoSearchPaths = true, -- auto serach command paths like 'src'
-				diagnosticMode = "openFilesOnly",
-				useLibraryCodeForTypes = true,
+				typeCheckingMode = "standard",
 			},
 		},
 	},
-})
-
-local pid = {
-	pyrefly = {},
-}
-local root_dir_pyrefly = function(bufnr, cb)
-	local root = vim.fs.root(bufnr, {
-		"pyproject.toml",
-		"pyrefly.roml",
-		".git",
-	}) or vim.fn.expand("%:p:h")
-	cb(root)
-end
-vim.lsp.config("pyrefly", {
-	cmd = { "pyrefly", "lsp" },
-	filetypes = { "python" },
-	root_dir = root_dir_pyrefly,
-	on_attach = function(client, _)
-		client.server_capabilities.codeActionProvider = false -- basedpyright has more kinds
-		client.server_capabilities.documentSymbolProvider = false -- basedpyright has more kinds
-		client.server_capabilities.hoverProvider = false -- basedpyright has more kinds
-		client.server_capabilities.inlayHintProvider = false -- basedpyright has more kinds
-		client.server_capabilities.referenceProvider = false -- basedpyright has more kinds
-		client.server_capabilities.signatureHelpProvider = false -- basedpyright has more kinds
-
-		if vim.g.has_win32 then
-			local processname = "pyrefly.exe"
-			if not processname then
-				return nil
-			end
-
-			-- get process list using cmd prompt (wmic is faster than pwsh)
-			local command = {
-				"wmic",
-				"process",
-				"where",
-				"name=" .. '"' .. processname .. '"',
-				"get",
-				"CreationDate,ProcessId",
-				"/format:csv",
-			}
-			local result = vim.system(command):wait() -- stdout, stderr, ret
-			if result.code ~= 0 then
-				vim.print("wmic command failed:", result.stderr)
-				return nil
-			end
-
-			-- split fields
-			local processes = {}
-			for line in result.stdout:gmatch("[^\r\n]+") do
-				if not (line:match("^Node") or line:match("^$")) then -- ignore header / empty line
-					-- CSV: Node,CreationDate,ProcessId
-					local fields = vim.split(line, ",")
-					if fields then
-						table.insert(processes, { creation = fields[2], pid = fields[3] })
-					end
-				end
-			end
-			-- sort by creation time to check what is recent one
-			table.sort(processes, function(a, b)
-				return a.creation > b.creation
-			end)
-			return processes[1].pid
-		end
-	end,
-	on_exit = function()
-		if vim.g.has_win32 then
-			for id in ipairs(pid.pyrefly) do
-				if not id then
-					return nil
-				end
-
-				local command = { "taskkill", "/PID", tostring(id), "/F" }
-				local result = vim.system(command):wait() -- stdout, stderr, ret
-				if result.code ~= 0 then
-					return nil
-				end
-			end
-		end
-	end,
-	settings = {},
 })
 
 -- C#
@@ -329,5 +218,5 @@ vim.lsp.config("matlab-ls", {
 vim.lsp.config("qmlls", {
 	capabilities = capabilities,
 	on_attach = on_attach,
-    cmd = vim.fn.filereadable("/etc/NIXOS") == 1 and { "/run/current-system/sw/bin/qmlls" } or { "qmlls" },
+	cmd = vim.fn.filereadable("/etc/NIXOS") == 1 and { "/run/current-system/sw/bin/qmlls" } or { "qmlls" },
 })

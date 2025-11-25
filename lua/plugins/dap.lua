@@ -30,6 +30,10 @@ dap.configurations.python = {
 		type = "python",
 		request = "launch",
 		program = "${file}",
+		args = function()
+			local args_string = vim.fn.input("Arguments (space-separated): ")
+			return vim.split(args_string, " ")
+		end,
 		pythonPath = function()
 			local conda_path = vim.env.CONDA_PREFIX
 			if conda_path then

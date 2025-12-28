@@ -1,8 +1,9 @@
-
 vim.pack.add({
 	{ src = "https://github.com/neovim/nvim-lspconfig" }, -- LSPs
 	{ src = "https://github.com/mason-org/mason.nvim" }, -- Loads LSP's, DAP's, linters, and formatters
 	{ src = "https://github.com/mason-org/mason-lspconfig.nvim" }, -- Autoloads LSP's for Mason
+	{ src = "https://github.com/nvim-lua/plenary.nvim" }, -- bloatmaxing
+	{ src = "https://github.com/MunifTanjim/nui.nvim" }, -- ui stuff for leetcode
 
 	{ src = "https://github.com/stevearc/conform.nvim" }, -- Formatter
 	{ src = "https://github.com/zapling/mason-conform.nvim" }, -- Autoloads formatters for Mason
@@ -15,9 +16,9 @@ vim.pack.add({
 
 	{ src = "https://github.com/vague2k/vague.nvim" }, -- Theme
 	{ src = "https://github.com/sphamba/smear-cursor.nvim" }, --Animated Cursor
-	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
+	{ src = "https://github.com/nvim-lualine/lualine.nvim" }, -- status line
 	{ src = "https://github.com/nvim-mini/mini.icons" }, -- Icons
-    { src = "https://github.com/nvim-tree/nvim-web-devicons" }, -- webdev icons
+	{ src = "https://github.com/nvim-tree/nvim-web-devicons" }, -- webdev icons
 	{ src = "https://github.com/folke/which-key.nvim" }, -- Because I'm a n00b
 
 	{ src = "https://github.com/goolord/alpha-nvim" },
@@ -30,8 +31,11 @@ vim.pack.add({
 	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
 	{ src = "https://github.com/kdheepak/lazygit.nvim" },
 	{ src = "https://github.com/folke/lazydev.nvim" }, -- Makes lua development much better
+	{ src = "https://github.com/OXY2DEV/markview.nvim" },
+	{ src = "https://github.com/epwalsh/obsidian.nvim" },
+	{ src = "https://github.com/kawre/leetcode.nvim" },
 
-    { src = "https://github.com/j-hui/fidget.nvim" },
+	{ src = "https://github.com/j-hui/fidget.nvim" },
 	{ src = "https://github.com/hrsh7th/nvim-cmp" },
 	{ src = "https://github.com/hrsh7th/cmp-nvim-lsp" },
 	{ src = "https://github.com/hrsh7th/cmp-buffer" },
@@ -53,6 +57,21 @@ require("plugins.which-key")
 require("plugins.auto-sessions")
 require("plugins.smear-cursor")
 
+require("leetcode").setup({
+	lang = "rust",
+})
+require("markview").setup()
+require("obsidian").setup({
+	workspaces = {
+		{
+			name = "notes",
+			path = "~/notes",
+		},
+	},
+	ui = {
+		enable = false,
+	},
+})
 require("fidget").setup()
 require("vague").setup({ transparent = true })
 require("nvim-surround").setup()
@@ -61,4 +80,3 @@ require("mini.icons").setup()
 require("nvim-web-devicons").setup()
 require("gitsigns").setup()
 require("lazydev").setup()
-

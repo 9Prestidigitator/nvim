@@ -1,4 +1,3 @@
--- DAP
 local dap = require("dap")
 local dapui = require("dapui")
 
@@ -78,6 +77,10 @@ dap.configurations.rust = {
 		request = "launch",
 		program = function()
 			return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+		end,
+		args = function()
+			local args_string = vim.fn.input("Arguments (space-separated): ")
+			return vim.split(args_string, " ")
 		end,
 	},
 }

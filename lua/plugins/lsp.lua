@@ -5,7 +5,6 @@ end
 require("mason-lspconfig").setup({
 	ensure_installed = (function()
 		local servers = {
-			"bashls", -- bash LSP
 			"lua_ls", -- lua LSP
 			"omnisharp", -- C# LSP
 			"qmlls", -- QML LSP
@@ -18,6 +17,7 @@ require("mason-lspconfig").setup({
 			table.insert(servers, "matlab_ls") -- Matlab LSP
 			table.insert(servers, "texlab") -- Latex LSP
 			table.insert(servers, "rust_analyzer") -- rust LSP
+			table.insert(servers, "bashls") -- bash LSP
 		end
 		return servers
 	end)(),

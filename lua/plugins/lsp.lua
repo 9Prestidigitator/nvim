@@ -7,17 +7,17 @@ require("mason-lspconfig").setup({
 		local servers = {
 			"bashls", -- bash LSP
 			"lua_ls", -- lua LSP
-			"rust_analyzer", -- rust LSP
-			"ruff", -- Python: Code actions, formatting
-			"basedpyright", -- Python: type checking
 			"omnisharp", -- C# LSP
 			"qmlls", -- QML LSP
 			"ts_ls", -- TS/JS LSP
-			"texlab", -- Latex LSP
-			"matlab_ls", -- Matlab LSP
 		}
 		if not is_nixos() then
 			table.insert(servers, "clangd") -- c/c++ LSP
+			table.insert(servers, "basedpyright") -- Python: type checking
+			table.insert(servers, "ruff") -- Python: Code actions, formatting
+			table.insert(servers, "matlab_ls") -- Matlab LSP
+			table.insert(servers, "texlab") -- Latex LSP
+			table.insert(servers, "rust_analyzer") -- rust LSP
 		end
 		return servers
 	end)(),

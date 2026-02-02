@@ -61,31 +61,25 @@ dap.adapters.codelldb = {
 	},
 }
 
-dap.configurations.cpp = {
+dap.configurations.c = {
 	{
-		name = "Debug c++ binary",
+		name = "Debug C or C++ binary",
 		type = "codelldb",
 		request = "launch",
+		cwd = "${workspaceFolder}",
+		stopOnEntry = false,
 		program = function()
-			return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
-		end,
-	},
-}
-
-dap.configurations.rust = {
-	{
-		name = "Debug rust binary",
-		type = "codelldb",
-		request = "launch",
-		program = function()
-			return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+			return vim.fn.input("executable: ", vim.fn.getcwd() .. "/build/", "file")
 		end,
 		args = function()
-			local args_string = vim.fn.input("Arguments (space-separated): ")
+			local args_string = vim.fn.input("arguments: ")
 			return vim.split(args_string, " ")
 		end,
 	},
 }
+
+dap.configurations.cpp = dap.configurations.c
+dap.configurations.rust = dap.configurations.c
 
 dap.adapters.coreclr = {
 	name = "Launch netcoredbg binary",

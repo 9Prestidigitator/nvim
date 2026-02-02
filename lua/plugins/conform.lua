@@ -7,19 +7,21 @@ require("conform").setup({
 		cs = { "csharpier" },
 		c = { "clang-format" },
 		cpp = { "clang-format" },
-        nix = { "alejandra" },
-        matlab = { lsp_format = 'first' },
+		nix = { "alejandra" },
+		matlab = { lsp_format = "first" },
 		javascript = { "prettier" },
 		json = { "jq" },
 		toml = { "taplo" },
-        css = { "prettierd" },
+		css = { "prettierd" },
 		markdown = { "prettierd" },
 		html = { "prettierd" },
-        yaml = { "prettierd" },
+		yaml = { "prettierd" },
 	},
 })
 
-require("mason-conform").setup()
+require("mason-conform").setup({
+	ignore_install = { "alejandra" },
+})
 
 vim.keymap.del("n", "grf")
 vim.keymap.set("n", "grf", function()

@@ -20,7 +20,7 @@ require("conform").setup({
 })
 
 require("mason-conform").setup({
-	ignore_install = { "alejandra" },
+	ignore_install = { "alejandra", "csharpier", "prettier", "prettierd", "black" },
 })
 
 vim.keymap.del("n", "grf")

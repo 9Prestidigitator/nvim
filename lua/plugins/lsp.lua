@@ -1,17 +1,26 @@
+local function is_nixos()
+	return vim.fn.filereadable("/etc/NIXOS") == 1
+end
+
 require("mason-lspconfig").setup({
-	ensure_installed = {
-		"bashls", -- bash LSP
-		"lua_ls", -- lua LSP
-		"rust_analyzer", -- rust LSP
-		"clangd", -- c/c++ LSP
-		"ruff", -- Python: Code actions, formatting
-		"basedpyright", -- Python: type checking
-		"omnisharp", -- C# LSP
-		"qmlls", -- QML LSP
-		"ts_ls", -- TS/JS LSP
-		"texlab", -- Latex LSP
-		"matlab_ls", -- Matlab LSP
-	},
+	ensure_installed = (function()
+		local servers = {
+			"bashls", -- bash LSP
+			"lua_ls", -- lua LSP
+			"rust_analyzer", -- rust LSP
+			"ruff", -- Python: Code actions, formatting
+			"basedpyright", -- Python: type checking
+			"omnisharp", -- C# LSP
+			"qmlls", -- QML LSP
+			"ts_ls", -- TS/JS LSP
+			"texlab", -- Latex LSP
+			"matlab_ls", -- Matlab LSP
+		}
+		if not is_nixos() then
+			table.insert(servers, "clangd") -- c/c++ LSP
+		end
+		return servers
+	end)(),
 	automatic_installation = true,
 })
 
@@ -64,6 +73,7 @@ vim.lsp.config("clangd", {
 	capabilities = capabilities,
 	on_attach = on_attach,
 	filetypes = { "c", "cpp" },
+	cmd = { "clangd" },
 })
 
 -- PYTHON

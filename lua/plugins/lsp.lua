@@ -6,7 +6,6 @@ require("mason-lspconfig").setup({
 	ensure_installed = (function()
 		local servers = {
 			"lua_ls", -- lua LSP
-			"omnisharp", -- C# LSP
 			"qmlls", -- QML LSP
 		}
 		if not is_nixos() then
@@ -18,6 +17,7 @@ require("mason-lspconfig").setup({
 			table.insert(servers, "rust_analyzer") -- rust LSP
 			table.insert(servers, "bashls") -- bash LSP
 			table.insert(servers, "ts_ls") -- TS/JS LSP
+			table.insert(servers, "omnisharp") -- C# LSP
 		end
 		return servers
 	end)(),
@@ -131,8 +131,7 @@ vim.lsp.config("omnisharp", {
 	capabilities = capabilities,
 	on_attach = on_attach,
 	cmd = {
-		"dotnet",
-		os.getenv("HOME") .. "/.local/share/nvim/mason/packages/omnisharp/libexec/OmniSharp.dll",
+		"OmniSharp",
 		"--languageserver",
 		"--hostPID",
 		tostring(vim.fn.getpid()),

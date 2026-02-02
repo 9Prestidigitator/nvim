@@ -8,7 +8,6 @@ require("mason-lspconfig").setup({
 			"lua_ls", -- lua LSP
 			"omnisharp", -- C# LSP
 			"qmlls", -- QML LSP
-			"ts_ls", -- TS/JS LSP
 		}
 		if not is_nixos() then
 			table.insert(servers, "clangd") -- c/c++ LSP
@@ -18,6 +17,7 @@ require("mason-lspconfig").setup({
 			table.insert(servers, "texlab") -- Latex LSP
 			table.insert(servers, "rust_analyzer") -- rust LSP
 			table.insert(servers, "bashls") -- bash LSP
+			table.insert(servers, "ts_ls") -- TS/JS LSP
 		end
 		return servers
 	end)(),

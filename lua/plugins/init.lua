@@ -33,6 +33,7 @@ vim.pack.add({
 	{ src = "https://github.com/folke/lazydev.nvim" }, -- Makes lua development much better
 	{ src = "https://github.com/OXY2DEV/markview.nvim" },
 	{ src = "https://github.com/epwalsh/obsidian.nvim" },
+    { src = "https://github.com/lervag/vimtex"}, -- Latex editing
 	{ src = "https://github.com/kawre/leetcode.nvim" },
 
 	{ src = "https://github.com/j-hui/fidget.nvim" },
@@ -60,6 +61,7 @@ require("plugins.smear-cursor")
 require("leetcode").setup({
 	lang = "rust",
 })
+require("plugins.vimtex")
 require("markview").setup()
 require("obsidian").setup({
 	workspaces = {

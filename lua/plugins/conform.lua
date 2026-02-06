@@ -8,6 +8,7 @@ require("conform").setup({
 		c = { "clang-format" },
 		cpp = { "clang-format" },
 		nix = { "alejandra" },
+		tex = { "tex-fmt" },
 		matlab = { lsp_format = "first" },
 		javascript = { "prettier" },
 		json = { "jq" },
@@ -20,7 +21,7 @@ require("conform").setup({
 })
 
 require("mason-conform").setup({
-	ignore_install = { "alejandra", "csharpier", "prettier", "prettierd", "black" },
+	ignore_install = { "alejandra", "csharpier", "prettier", "prettierd", "black", "tex-fmt" },
 })
 
 vim.keymap.del("n", "grf")

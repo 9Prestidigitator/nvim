@@ -92,7 +92,7 @@
             "text/x-python"
             "application/x-nix"
           ];
-          icon = "Neovim";
+          icon = ./neovim-logo.sgv;
         };
 
 

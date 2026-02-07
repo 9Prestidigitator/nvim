@@ -25,7 +25,7 @@
       nvimPkg = pkgs.neovim;
 
       nvimWrapper = pkgs.writeShellApplication {
-        name = "nvim";
+        name = "${cfg.appName}";
         runtimeInputs = [nvimPkg];
         text = ''
           set -euo pipefail

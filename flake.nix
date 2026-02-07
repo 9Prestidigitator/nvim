@@ -36,7 +36,7 @@
         '';
       };
     in {
-      options.programs.prestiNvim = {
+      options.programs.Neovim = {
         enable = lib.mkEnableOption "Personal Neovim config + nightly";
 
         repo = lib.mkOption {

@@ -22,7 +22,7 @@
       ...
     }: let
       cfg = config.programs.prestiNvim;
-      nvimPkg = pkgs.neovim;
+      nvimPkg = pkgs.neovim-nightly;
 
       nvimWrapper = pkgs.writeShellApplication {
         name = "nvim";
@@ -64,7 +64,7 @@
         };
         configDir = lib.mkOption {
           type = lib.types.str;
-          default = "${cfg.configHome}/${cfg.appName}-9prest";
+          default = "${cfg.configHome}/${cfg.appName}";
           description = "Directory where the config repo lives.";
         };
       };

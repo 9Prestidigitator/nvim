@@ -24,7 +24,7 @@
       ...
     }: let
       cfg = config.programs.prestiNvim;
-      nvimPkg = pkgs.neovim;
+      nvimPkg = neovim-nightly-overlay.packages.${pkgs.system}.default;
 
       nvimWrapper = pkgs.writeShellApplication {
         name = "${cfg.appName}";

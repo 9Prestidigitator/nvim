@@ -1,5 +1,7 @@
 {
-  description = "Neovim + config packaged as a flake";
+  description = "Neovim + Config";
+  # Point of this is to package my desired Neovim version, and configuration
+  # into one home manager module.
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -49,7 +51,7 @@
         };
         appName = lib.mkOption {
           type = lib.types.str;
-          default = "nvim-9";
+          default = "nvim";
           description = "NVIM_APPNAME used for XDG dirs (config/data/state/cache)";
         };
         autoUpdate = lib.mkOption {

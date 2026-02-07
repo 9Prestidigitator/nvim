@@ -83,6 +83,7 @@
           type = "Application";
           categories = ["Utility" "TextEditor" "Development"];
           mimeType = [
+            "inode/directory"
             "text/plain"
             "text/markdown"
             "text/x-shellscript"

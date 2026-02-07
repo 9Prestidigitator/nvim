@@ -8,17 +8,25 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
-  outputs = { self, nixpkgs, flake-utils, neovim-nightly-overlay, ...
-  }: 
-  let
-    hmModule = { config, lib, pkgs, ... }: 
-    let
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+    neovim-nightly-overlay,
+    ...
+  }: let
+    hmModule = {
+      config,
+      lib,
+      pkgs,
+      ...
+    }: let
       cfg = config.programs.prestiNvim;
       nvimPkg = pkgs.neovim;
 
       nvimWrapper = pkgs.writeShellApplication {
         name = "nvim";
-        runtimeInputs = [ nvimPkg ];
+        runtimeInputs = [nvimPkg];
         text = ''
           set -euo pipefail
           export NVIM_APPNAME="${cfg.appName}"
@@ -51,7 +59,7 @@
         };
         configHome = lib.mkOption {
           type = lib.types.str;
-          default = "${config.xdg.configHome}";
+          default = "${config.home.homeDirectory}/.config";
           description = "Config directory (~/.config).";
         };
         configDir = lib.mkOption {
@@ -67,8 +75,11 @@
           lib.hm.dag.entryAfter ["writeBoundary"]
           (lib.mkIf cfg.autoUpdate ''
               set -euo pipefail
+
               dst="${cfg.configDir}"
               repo="${cfg.repo}"
+              branch="${cfg.branch}"
+
               mkdir -p "${cfg.configHome}"
 
               if [ -d "$dst/.git" ]; then
@@ -154,7 +165,8 @@
           pkgs.alejandra
         ];
       };
-    }) // {
+    })
+    // {
       homeManagerModules.default = hmModule;
     };
 }

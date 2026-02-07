@@ -102,44 +102,44 @@
         inherit system;
         overlays = [neovim-nightly-overlay.overlays.default];
       };
-      nvimNightly = neovim-nightly-overlay.packages.${system}.default;
-      nvimConfig = pkgs.stdenvNoCC.mkDerivation {
-        name = "9prestidigitator-nvim-config";
-        src = self;
-        dontBuild = true;
-        installPhase = ''
-          mkdir -p $out/9prestidigitator-nvim
-          cp -R $src/* $out/9prestidigitator-nvim/
-        '';
-      };
-      nvimWrapped = pkgs.writeShellApplication {
-        name = "nvim";
-        runtimeInputs = [nvimNightly];
-        text = ''
-          set -euo pipefail
-          export NVIM_APPNAME="9prestidigitator-nvim"
-
-          cfg_home="''${XDG_CONFIG_HOME:-$HOME/.config}"
-          dst="$cfg_home/$NVIM_APPNAME"
-
-          # Prefer user checkout if present; else fallback to flake snapshot
-          if [ -e "$dst/init.lua" ]; then
-            export XDG_CONFIG_HOME="$cfg_home"
-          else
-            export XDG_CONFIG_HOME="${nvimConfig}"
-          fi
-
-          exec "${nvimNightly}/bin/nvim" "$@"
-        '';
-      };
+      # nvimNightly = neovim-nightly-overlay.packages.${system}.default;
+      # nvimConfig = pkgs.stdenvNoCC.mkDerivation {
+      #   name = "9prestidigitator-nvim-config";
+      #   src = self;
+      #   dontBuild = true;
+      #   installPhase = ''
+      #     mkdir -p $out/9prestidigitator-nvim
+      #     cp -R $src/* $out/9prestidigitator-nvim/
+      #   '';
+      # };
+      # nvimWrapped = pkgs.writeShellApplication {
+      #   name = "nvim";
+      #   runtimeInputs = [nvimNightly];
+      #   text = ''
+      #     set -euo pipefail
+      #     export NVIM_APPNAME="9prestidigitator-nvim"
+      #
+      #     cfg_home="''${XDG_CONFIG_HOME:-$HOME/.config}"
+      #     dst="$cfg_home/$NVIM_APPNAME"
+      #
+      #     # Prefer user checkout if present; else fallback to flake snapshot
+      #     if [ -e "$dst/init.lua" ]; then
+      #       export XDG_CONFIG_HOME="$cfg_home"
+      #     else
+      #       export XDG_CONFIG_HOME="${nvimConfig}"
+      #     fi
+      #
+      #     exec "${nvimNightly}/bin/nvim" "$@"
+      #   '';
+      # };
     in {
-      packages = {default = nvimWrapped;};
-      apps = {
-        default = {
-          type = "app";
-          program = "${nvimWrapped}/bin/nvim";
-        };
-      };
+      # packages = {default = nvimWrapped;};
+      # apps = {
+      #   default = {
+      #     type = "app";
+      #     program = "${nvimWrapped}/bin/nvim";
+      #   };
+      # };
 
       devShells.default = pkgs.mkShell {
         shellHook = ''
@@ -147,7 +147,7 @@
         '';
 
         packages = [
-          nvimWrapped
+          # nvimWrapped
           pkgs.lua-language-server
           pkgs.stylua
 

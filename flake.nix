@@ -154,7 +154,7 @@
           pkgs.alejandra
         ];
       };
-    }) {
+    }) // {
       homeManagerModules.default = hmModule;
     };
 }

@@ -14,119 +14,153 @@
     flake-utils,
     neovim-nightly-overlay,
     ...
-  }:
-    flake-utils.lib.eachDefaultSystem (
-      system: let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [
-            neovim-nightly-overlay.overlays.default
-          ];
+  }: let
+    hmModule = {
+      config,
+      lib,
+      pkgs,
+      ...
+    }: let
+      cfg = config.programs.prestiNvim;
+      nvimPkg = pkgs.neovim-nightly;
+
+      nvimWrapper = pkgs.writeShellApplication {
+        name = "nvim";
+        runtimeInputs = [nvimPkg];
+        text = ''
+          set -euo pipefail
+          export NVIM_APPNAME="${cfg.appName}"
+          exec "${nvimPkg}/bin/nvim" "$@"
+        '';
+      };
+    in {
+      options.programs.prestiNvim = {
+        repo = lib.mkOption {
+          type = lib.types.str;
+          default = "https://github.com/9Prestidigitator/nvim.git";
+          description = "Git repo containing configuration";
         };
-
-        # avoid treesitter hash-mismatch issues
-        nvimNightly = neovim-nightly-overlay.packages.${system}.default;
-
-        # Put this repo into the store under a dedicated appname directory
-        nvimConfig = pkgs.stdenvNoCC.mkDerivation {
-          name = "9prestidigitator-nvim-config";
-          src = self;
-          dontBuild = true;
-          installPhase = ''
-            mkdir -p $out/9prestidigitator-nvim
-            cp -R $src/* $out/9prestidigitator-nvim/
-          '';
+        branch = lib.mkOption {
+          type = lib.types.str;
+          defualt = "main";
+          description = "Branch of git repository to use.";
         };
+        appName = lib.mkOption {
+          type = lib.types.str;
+          default = "nvim";
+          description = "NVIM_APPNAME used for XDG dirs (config/data/state/cache)";
+        };
+        autoUpdate = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Whether to update via git pull (ff-only) during activation.";
+        };
+        configHome = lib.mkOption {
+          type = lib.types.str;
+          default = "${config.xdg.configHome}";
+          description = "Config directory (~/.config).";
+        };
+        configDir = lib.mkOption {
+          type = lib.types.str;
+          default = "${cfg.configHome}/${cfg.appName}-9prest";
+          description = "Directory where the config repo lives.";
+        };
+      };
 
-        nvimWrapped = pkgs.writeShellApplication {
-          name = "nvim-9prestidigitator";
-          runtimeInputs = [nvimNightly pkgs.coreutils pkgs.git pkgs.rsync];
-          text = ''
-            set -euo pipefail
-            export NVIM_APPNAME="9prestidigitator-nvim"
+      config = lib.mkIf cfg.enable {
+        home.packages = [nvimWrapper];
+        home.activation.prestiNvimUpdate =
+          lib.hm.dag.entryAfter ["writeBoundary"]
+          (lib.mkIf cfg.autoUpdate ''
+              set -euo pipefail
+              dst="${cfg.configDir}"
+              repo="${cfg.repo}"
+              mkdir -p "${cfg.configHome}"
 
-            cfg_home="''${XDG_CONFIG_HOME:-$HOME/.config}"
-            dst="$cfg_home/$NVIM_APPNAME"
-            src="${nvimConfig}/9prestidigitator-nvim"
-
-            is_dir_empty() {
-              [ -z "$(ls -A "$1" 2>/dev/null || true)" ]
-            }
-
-            clone_or_seed() {
-              [ -d "$dst/.git" ] && return 0
-
-              if [ ! -e "$dst/init.lua" ]; then
-                git clone https://github.com/9Prestidigitator/nvim.git "$dst"
-                return 0
+              if [ -d "$dst/.git" ]; then
+              # Only ff when not detached, has upstream, clean working tree
+              if [ "$(${pkgs.git}/bin/git -C "$dst" rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)" != "HEAD" ] &&
+                 ${pkgs.git}/bin/git -C "$dst" rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1 &&
+                 [ -z "$(${pkgs.git}/bin/git -C "$dst" status --porcelain)" ]; then
+                ${pkgs.git}/bin/git -C "$dst" pull --ff-only || true
               fi
-
-              # else, seed from flake snapshot
-              if [ ! -e "$dst/init.lua" ]; then
-                rsync -a "$src/" "$dst/"
+              else
+              # Clone only if missing/empty; never overwrite non-empty non-git dirs
+              if [ -e "$dst" ] && [ -n "$(ls -A "$dst" 2>/dev/null || true)" ]; then
+                echo "prestiNvim: $dst exists and is not empty (and not a git repo); not overwriting."
+              else
+                rm -rf "$dst"
+                ${pkgs.git}/bin/git clone --branch "$branch" "$repo" "$dst"
               fi
-            }
+            fi
+          '');
+      };
+    };
+  in
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [neovim-nightly-overlay.overlays.default];
+      };
+      nvimNightly = neovim-nightly-overlay.packages.${system}.default;
+      nvimConfig = pkgs.stdenvNoCC.mkDerivation {
+        name = "9prestidigitator-nvim-config";
+        src = self;
+        dontBuild = true;
+        installPhase = ''
+          mkdir -p $out/9prestidigitator-nvim
+          cp -R $src/* $out/9prestidigitator-nvim/
+        '';
+      };
+      nvimWrapped = pkgs.writeShellApplication {
+        name = "nvim";
+        runtimeInputs = [nvimNightly];
+        text = ''
+          set -euo pipefail
+          export NVIM_APPNAME="9prestidigitator-nvim"
 
-            mkdir -p "$dst"
-            auto_update() {
-              [ -d "$dst/.git" ] || return 0
+          cfg_home="''${XDG_CONFIG_HOME:-$HOME/.config}"
+          dst="$cfg_home/$NVIM_APPNAME"
 
-              # must be on a branch and have an upstream
-              if [ "$(git -C "$dst" rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)" = "HEAD" ]; then
-                return 0
-              fi
-              git -C "$dst" rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1 || return 0
-
-              # Don't touch if there are local changes
-              [ -n "$(git -C "$dst" status --porcelain)" ] && return 0
-
-              # fetch/fast-forward only if behind
-              git -C "$dst" fetch --quiet || return 0
-              local_counts="$(git -C "$dst" rev-list --left-right --count "HEAD...@{u}" 2>/dev/null || echo "0 0")"
-              behind="$(printf '%s' "$local_counts" | awk '{print $2}')"
-
-              if [ "''${behind:-0}" -gt 0 ]; then
-                git -C "$dst" pull --ff-only --quiet || true
-              fi
-            }
-
-            clone_or_seed
-            auto_update
-
+          # Prefer user checkout if present; else fallback to flake snapshot
+          if [ -e "$dst/init.lua" ]; then
             export XDG_CONFIG_HOME="$cfg_home"
-            exec "${nvimNightly}/bin/nvim" "$@"
-          '';
-        };
-      in {
-        packages = {
-          default = nvimWrapped;
-          neovim = nvimWrapped;
-        };
+          else
+            export XDG_CONFIG_HOME="${nvimConfig}"
+          fi
 
-        apps.default = {
+          exec "${nvimNightly}/bin/nvim" "$@"
+        '';
+      };
+    in {
+      packages = {default = nvimWrapped;};
+      apps = {
+        default = {
           type = "app";
-          program = "${nvimWrapped}/bin/nvim-9prestidigitator";
+          program = "${nvimWrapped}/bin/nvim";
         };
+      };
 
-        devShells.default = pkgs.mkShell {
-          shellHook = ''
-            export SHELL="/run/current-system/sw/bin/bash"
-          '';
+      devShells.default = pkgs.mkShell {
+        shellHook = ''
+          export SHELL="/run/current-system/sw/bin/bash"
+        '';
 
-          packages = [
-            nvimWrapped
-            pkgs.lua-language-server
-            pkgs.stylua
+        packages = [
+          nvimWrapped
+          pkgs.lua-language-server
+          pkgs.stylua
 
-            pkgs.git
+          pkgs.git
 
-            pkgs.ripgrep
-            pkgs.fd
+          pkgs.ripgrep
+          pkgs.fd
 
-            pkgs.nixd
-            pkgs.alejandra
-          ];
-        };
-      }
-    );
+          pkgs.nixd
+          pkgs.alejandra
+        ];
+      };
+    }) {
+      homeManagerModules.default = hmModule;
+    };
 }

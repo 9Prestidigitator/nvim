@@ -73,6 +73,35 @@
 
       config = lib.mkIf cfg.enable {
         home.packages = [nvimWrapper];
+
+        xdg.desktopEntries.${cfg.appName} = {
+          name = "Neovim (${cfg.appName})";
+          genericName = "Text Editor";
+          comment = "Neovim (nightly) with ${cfg.appName} config";
+          exec = "${cfg.appName} %F";
+          terminal = true; # Neovim is terminal-based
+          type = "Application";
+          categories = ["Utility" "TextEditor" "Development"];
+          mimeType = [
+            "text/plain"
+            "text/markdown"
+            "text/x-shellscript"
+            "text/x-csrc"
+            "text/x-c++src"
+            "text/x-python"
+            "application/x-nix"
+          ];
+          icon = "nvim";
+        };
+
+
+        xdg.mimeApps.enable = true;
+        xdg.mimeApps.defaultApplications = {
+          "text/plain" = ["${cfg.appName}.desktop"];
+          "text/markdown" = ["${cfg.appName}.desktop"];
+          "application/x-nix" = ["${cfg.appName}.desktop"];
+        };
+
         home.activation.prestiNvimUpdate =
           lib.hm.dag.entryAfter ["writeBoundary"]
           (lib.mkIf cfg.autoUpdate ''

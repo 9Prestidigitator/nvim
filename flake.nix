@@ -8,25 +8,17 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
-    neovim-nightly-overlay,
-    ...
-  }: let
-    hmModule = {
-      config,
-      lib,
-      pkgs,
-      ...
-    }: let
+  outputs = { self, nixpkgs, flake-utils, neovim-nightly-overlay, ...
+  }: 
+  let
+    hmModule = { config, lib, pkgs, ... }: 
+    let
       cfg = config.programs.prestiNvim;
-      nvimPkg = pkgs.neovim-nightly;
+      nvimPkg = pkgs.neovim;
 
       nvimWrapper = pkgs.writeShellApplication {
         name = "nvim";
-        runtimeInputs = [nvimPkg];
+        runtimeInputs = [ nvimPkg ];
         text = ''
           set -euo pipefail
           export NVIM_APPNAME="${cfg.appName}"
@@ -35,6 +27,8 @@
       };
     in {
       options.programs.prestiNvim = {
+        enable = lib.mkEnableOption "Personal Neovim config + nightly";
+
         repo = lib.mkOption {
           type = lib.types.str;
           default = "https://github.com/9Prestidigitator/nvim.git";

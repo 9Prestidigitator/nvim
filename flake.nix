@@ -22,7 +22,7 @@
       ...
     }: let
       cfg = config.programs.prestiNvim;
-      nvimPkg = pkgs.neovim-nightly;
+      nvimPkg = pkgs.neovim;
 
       nvimWrapper = pkgs.writeShellApplication {
         name = "nvim";

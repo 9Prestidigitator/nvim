@@ -41,7 +41,7 @@
         };
         appName = lib.mkOption {
           type = lib.types.str;
-          default = "nvim";
+          default = "nvim-9";
           description = "NVIM_APPNAME used for XDG dirs (config/data/state/cache)";
         };
         autoUpdate = lib.mkOption {

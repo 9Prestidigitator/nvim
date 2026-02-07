@@ -92,7 +92,7 @@
             "text/x-python"
             "application/x-nix"
           ];
-          icon = "nvim";
+          icon = "Neovim";
         };
 
 

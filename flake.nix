@@ -75,7 +75,7 @@
         home.packages = [nvimWrapper];
 
         xdg.desktopEntries.${cfg.appName} = {
-          name = "Neovim (${cfg.appName})";
+          name = "Neovim";
           genericName = "Text Editor";
           comment = "Neovim (nightly) with ${cfg.appName} config";
           exec = "${cfg.appName} %F";

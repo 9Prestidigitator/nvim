@@ -190,21 +190,6 @@ vim.lsp.config("texlab", {
 	handlers = {
 		-- disable 'latex' source diagnostics
 		["textDocument/publishDiagnostics"] = publishDiagnostics_texlab,
-
-		-- texlab supports build / viewer
-		-- but viewer doesn't executes inverse search properly
-		-- build can only compile current file using %f, not main file.
-		-- If you want to compile main file, remove argument %f and use config file like .latexmk or Tectonic.toml
-		-- so It needs to use texflow.nvim to more flexible operation.
-
-		-- texlab supports two diagnostics source (texlab / latex)
-		-- `texlab` source shows results independent of the compile engine.
-		-- `latex` source read log file and show the result of parsing.
-		-- It has  not enough feature. because It doesn't find proper line of package warning.
-		-- and It cannot show properly when there are multiple files.
-		-- and It doesn't reset even though there are no warning in log file.
-		-- I cannot understand when the `latex` source parsing and updating.
-		-- It is the second reason why I use texflow.nvim
 	},
 })
 

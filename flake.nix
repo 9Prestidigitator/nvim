@@ -36,7 +36,7 @@
         };
         branch = lib.mkOption {
           type = lib.types.str;
-          defualt = "main";
+          default = "main";
           description = "Branch of git repository to use.";
         };
         appName = lib.mkOption {

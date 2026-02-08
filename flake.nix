@@ -23,7 +23,7 @@
       pkgs,
       ...
     }: let
-      cfg = config.programs.Neovim;
+      cfg = config.programs.neovim;
       nvimPkg = neovim-nightly-overlay.packages.${pkgs.system}.default;
 
       nvimWrapper = pkgs.writeShellApplication {
@@ -92,7 +92,7 @@
             "text/x-python"
             "application/x-nix"
           ];
-          icon = ./logo.sgv;
+          icon = ./logo.svg;
         };
 
         xdg.mimeApps.enable = true;

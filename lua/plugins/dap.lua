@@ -1,3 +1,4 @@
+local tools = require("core.tools")
 local dap = require("dap")
 local dapui = require("dapui")
 

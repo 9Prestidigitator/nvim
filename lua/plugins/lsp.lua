@@ -1,27 +1,8 @@
-local function is_nixos()
-	return vim.fn.filereadable("/etc/NIXOS") == 1
-end
+local tools = require("core.tools")
 
 require("mason-lspconfig").setup({
-	ensure_installed = (function()
-		local servers = {
-			"lua_ls", -- lua LSP
-			"qmlls", -- QML LSP
-		}
-		if not is_nixos() then
-			table.insert(servers, "clangd") -- c/c++ LSP
-			table.insert(servers, "basedpyright") -- Python: type checking
-			table.insert(servers, "ruff") -- Python: Code actions, formatting
-			table.insert(servers, "matlab_ls") -- Matlab LSP
-			table.insert(servers, "texlab") -- Latex LSP
-			table.insert(servers, "rust_analyzer") -- rust LSP
-			table.insert(servers, "bashls") -- bash LSP
-			table.insert(servers, "ts_ls") -- TS/JS LSP
-			table.insert(servers, "omnisharp") -- C# LSP
-		end
-		return servers
-	end)(),
-	automatic_installation = true,
+	ensure_installed = tools.mason_should_manage_tools() and tools.lsp_servers or {},
+	automatic_installation = tools.mason_should_manage_tools(),
 })
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -35,17 +16,17 @@ local on_attach = function(client, bufnr)
 end
 
 vim.lsp.enable({
-	"bashls", -- bash LSP
-	"lua_ls", -- lua LSP
-	"rust_analyzer", -- rust LSP
-	"clangd", -- c/c++ LSP
-	"ruff", -- Python: Code actions, formatting
-	"basedpyright", -- Python: type checking
-	"omnisharp", -- c# LSP
-	"qmlls", -- QML LSP
-	"ts_ls", -- TS/JS LSP
+    "rust_analyzer", -- Rust LSP
+    "clangd", -- C/C++ LSP
+    "ruff", -- Python: Code actions, formatting
+    "basedpyright", -- Python: type checking
+    "omnisharp", -- C# LSP
+    "lua_ls", -- lua LSP
+    "bashls", -- bash LSP
 	"texlab", -- Latex LSP
-	"matlab-ls", -- Matlab Lsp
+	"matlab_ls", -- Matlab Lsp
+    "qmlls", -- QML LSP
+    "ts_ls", -- TS/JS LSP
 	"nixd", -- nix LSP
 })
 
@@ -194,7 +175,7 @@ vim.lsp.config("texlab", {
 })
 
 -- MATLAB
-vim.lsp.config("matlab-ls", {
+vim.lsp.config("matlab_ls", {
 	cmd = { "matlab-language-server", "--stdio" },
 	filetypes = { "matlab" },
 	settings = {

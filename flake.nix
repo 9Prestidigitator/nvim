@@ -147,13 +147,15 @@
           lua-language-server
           stylua
 
+          nixd
+          alejandra
+
           git
 
           ripgrep
           fd
 
-          nixd
-          alejandra
+          wl-clipboard
         ];
       };
     })

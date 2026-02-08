@@ -1,3 +1,5 @@
+local tools = require("core.tools")
+
 -- Formatters
 require("conform").setup({
 	formatters_by_ft = {
@@ -21,7 +23,7 @@ require("conform").setup({
 })
 
 require("mason-conform").setup({
-	ignore_install = { "alejandra", "stylua", "csharpier", "prettier", "prettierd", "black", "tex-fmt" },
+	ignore_install = tools.mason_ignore_install(),
 })
 
 vim.keymap.del("n", "grf")

@@ -95,7 +95,6 @@
           icon = ./logo.sgv;
         };
 
-
         xdg.mimeApps.enable = true;
         xdg.mimeApps.defaultApplications = {
           "text/plain" = ["${cfg.appName}.desktop"];
@@ -137,7 +136,6 @@
     flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [neovim-nightly-overlay.overlays.default];
       };
     in {
       devShells.default = pkgs.mkShell {

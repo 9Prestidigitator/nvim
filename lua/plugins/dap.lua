@@ -1,6 +1,7 @@
-local tools = require("core.tools")
 local dap = require("dap")
 local dapui = require("dapui")
+-- This will take the most amount of work to make nix-aware, so I will put it off.
+local tools = require("core.tools")
 
 dapui.setup()
 dap.listeners.after.event_initialized.dapui_config = function()
@@ -24,6 +25,7 @@ dap.listeners.before.event_exited.dapui_config = function()
 end
 
 require("dap-python").setup(os.getenv("HOME") .. "/.local/share/nvim/mason/packages/debugpy/venv/bin/python")
+
 dap.configurations.python = {
 	{
 		name = "Debug python file",
@@ -31,7 +33,7 @@ dap.configurations.python = {
 		request = "launch",
 		program = "${file}",
 		args = function()
-			local args_string = vim.fn.input("Arguments (space-separated): ")
+			local args_string = vim.fn.input("Arguments: ")
 			return vim.split(args_string, " ")
 		end,
 		pythonPath = function()
@@ -70,7 +72,7 @@ dap.configurations.c = {
 		cwd = "${workspaceFolder}",
 		stopOnEntry = false,
 		program = function()
-			return vim.fn.input("executable: ", vim.fn.getcwd() .. "/build/", "file")
+			return vim.fn.input("executable: ", vim.fn.getcwd(), "file")
 		end,
 		args = function()
 			local args_string = vim.fn.input("arguments: ")
@@ -99,4 +101,4 @@ dap.configurations.cs = {
 	},
 }
 
-require("mason-nvim-dap").setup({ automatic_installation = tools.mason_should_manage_tools() })
+require("mason-nvim-dap").setup({ automatic_installation = true })

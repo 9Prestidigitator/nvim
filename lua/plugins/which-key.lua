@@ -7,6 +7,8 @@ require("which-key").setup({
 			{ "<leader>d", group = "Debug" },
 			{ "<leader>f", group = "Find" },
 			{ "<leader>b", group = "Buffer" },
+			{ "<leader>w", group = "Tabs" },
+			{ "<leader>l", group = "lazy" },
 			{ "[", group = "prev" },
 			{ "]", group = "next" },
 			{ "g", group = "goto" },

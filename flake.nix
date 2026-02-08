@@ -154,8 +154,6 @@
 
           ripgrep
           fd
-
-          wl-clipboard
         ];
       };
     })

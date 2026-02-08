@@ -99,4 +99,4 @@ dap.configurations.cs = {
 	},
 }
 
-require("mason-nvim-dap").setup({ automatic_installation = true })
+require("mason-nvim-dap").setup({ automatic_installation = tools.mason_should_manage_tools() })

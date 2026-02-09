@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="logo.svg" alt="Neovim">
+  <img src="https://raw.githubusercontent.com/neovim/neovim.github.io/master/static/logos/neovim-logo-300x87.png" alt="Neovim">
 </h1>
 
 Nix-aware [Neovim](https://github.com/neovim/neovim) lua configuration.

@@ -27,7 +27,10 @@ Import the module in a home manager configuration:
   imports = [
     inputs.neovim.homeManagerModules.default
   ];
-  programs.Neovim.enable = true;
+  programs.Neovim = {
+    enable = true;
+    autoUpdate = true;
+  };
 }
 ```
 
@@ -48,6 +51,29 @@ These are a good to have in you environment for a better experience:
 - MATLAB Language Server
 - qmlls
 - TS Language Server
+- nixd
+
+## Formatters
+
+- clang-format
+- alejandra
+- csharpier
+- black
+- stylua
+- prettier
+- prettierd
+- tex-fmt
+- shfmt
+- taplo
+- jq
+
+## Debuggers
+
+This is not yet nix aware so it will be installed via mason everytime:
+
+- codelldb
+- netcoredbg
+- debugpy
 
 ## Programs
 

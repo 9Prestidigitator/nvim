@@ -150,6 +150,8 @@
           nixd
           alejandra
 
+          prettierd
+
           git
 
           ripgrep

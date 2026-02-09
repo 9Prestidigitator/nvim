@@ -36,7 +36,7 @@ Import the module in a home manager configuration:
 
 # External Tooling
 
-These are a good to have in you environment for a better experience:
+These are a good to have in you environment for a better experience. If you are using NixOS it is expected that you provide these packages via your dev shell or configuration, otherwise will be installed via Mason.
 
 ## LSPs
 
@@ -69,7 +69,7 @@ These are a good to have in you environment for a better experience:
 
 ## Debuggers
 
-This is not yet nix aware so it will be installed via mason everytime:
+This is not yet nix aware so it will be installed via mason everywhere.
 
 - codelldb
 - netcoredbg
@@ -82,41 +82,58 @@ This is not yet nix aware so it will be installed via mason everytime:
 
 # Plugins
 
-- nvim-lspconfig
-- mason.nvim
-- mason-lspconfig.nvim
-- mason-confirm.nvim
-- mason-nvim-dap.nvim
+## Core
+
 - plenary.nvim
+- auto-session
+- alpha-nvim
+- nvim-autopairs
+- nvim-surround
+- which-key.nvim
 - nui.nvim
+- lazygit.nvim
+- obsidian.nvim
+- leetcode.nvim
+
+## LSP/Formatters/Debuggers
+
+- nvim-lspconfig
+- fidget.nvim
 - conform.nvim
 - nvim-dap
 - nvim-dap-ui
 - nvim-nio
 - nvim-dap-python
-- vague.nvim
-- smear-cursor.nvim
-- lualine.nvim
-- mini.icons
-- nvim-web-devicons
-- which-key.nvim
-- alpha-nvim
+- mini.pick
+- lazydev.nvim
+- vimtex
+
+## File Explorer
+
 - oil.nvim
 - oil-vcs-status
-- auto-session
-- mini.pick
-- nvim-autopairs
-- nvim-surround
-- gitsigns.nvim
-- lazygit.nvim
-- lazydev.nvim
-- markview.nvim
-- obsidian.nvim
-- vimtex
-- leetcode.nvim
-- fidget.nvim
+
+## Packaging
+
+- mason.nvim
+- mason-lspconfig.nvim
+- mason-confirm.nvim
+- mason-nvim-dap.nvim
+
+## Autocomplete
+
 - nvim-cmp
 - cmp-nvim-lsp
 - cmp-buffer
 - cmp-path
 - cmp-cmdline
+
+## Appearance
+
+- vague.nvim
+- lualine.nvim
+- gitsigns.nvim
+- smear-cursor.nvim
+- markview.nvim
+- mini.icons
+- nvim-web-devicons

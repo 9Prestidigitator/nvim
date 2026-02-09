@@ -4,11 +4,11 @@
 
 Nix-aware [Neovim](https://github.com/neovim/neovim) lua configuration.
 
-# Nix
+# Nix Flake
 
 This flake packages the required version of neovim (nightly) with the configuration.
 
-## Home Manager
+## Home Manager Module
 
 Add input to flake.
 

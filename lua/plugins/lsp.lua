@@ -16,17 +16,17 @@ local on_attach = function(client, bufnr)
 end
 
 vim.lsp.enable({
-    "rust_analyzer", -- Rust LSP
-    "clangd", -- C/C++ LSP
-    "ruff", -- Python: Code actions, formatting
-    "basedpyright", -- Python: type checking
-    "omnisharp", -- C# LSP
-    "lua_ls", -- lua LSP
-    "bashls", -- bash LSP
+	"rust_analyzer", -- Rust LSP
+	"clangd", -- C/C++ LSP
+	"ruff", -- Python: Code actions, formatting
+	"basedpyright", -- Python: type checking
+	"omnisharp", -- C# LSP
+	"lua_ls", -- lua LSP
+	"bashls", -- bash LSP
 	"texlab", -- Latex LSP
 	"matlab_ls", -- Matlab Lsp
-    "qmlls", -- QML LSP
-    "ts_ls", -- TS/JS LSP
+	"qmlls", -- QML LSP
+	"ts_ls", -- TS/JS LSP
 	"nixd", -- nix LSP
 })
 
@@ -53,8 +53,16 @@ vim.lsp.config("rust_analyzer", {
 vim.lsp.config("clangd", {
 	capabilities = capabilities,
 	on_attach = on_attach,
-	filetypes = { "c", "cpp" },
-	cmd = { "clangd" },
+	cmd = {
+		"clangd",
+		"--background-index",
+		"--clang-tidy",
+		"--completion-style=detailed",
+		"--header-insertion=iwyu",
+		"--header-insertion-decorators",
+		"--fallback-style=none",
+	},
+    filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
 })
 
 -- PYTHON

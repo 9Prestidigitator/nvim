@@ -14,12 +14,15 @@ map("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Explorer" })
 map("n", "<leader>A", "<CMD>Alpha<CR>", { desc = "Home" })
 map("n", "<leader>lg", ":LazyGit<CR>", { desc = "git" })
 
+
 map("n", "<leader>fg", ":Pick grep_live<CR>", { desc = "Find via ripgrep" })
 map("n", "<leader>ff", ":Pick files<CR>", { desc = "Find file in directory" })
+map("n", "<leader>fF", ":PickAllFiles<CR>", { desc = "Find all files in dir" })
 map("n", "<leader>fb", ":Pick buffers<CR>", { desc = "Find buffers in session" })
 map("n", "<leader>fr", ":PickRecentFiles<CR>", { desc = "Find recent files" })
 map("n", "<leader>fh", ":Pick help<CR>", { desc = "Find help" })
 map("n", "<leader>fm", ":PickKeymaps<CR>", { desc = "Find mappings" })
+map("n", "<leader>ft", ":PickTabs<CR>", { desc = "Find tabs" })
 
 -- Buffer binds
 map("n", "<leader>bw", ":bw<CR>", { desc = "Wipeout Buffer" })
@@ -32,11 +35,11 @@ map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
 
 -- Tab binds
 map("n", "<leader>ww", ":tabnew<CR>", { desc = "New tab" })
-map("n", "<leader>wx", ":tabclose<CR>", { desc = "Close tab" })
-map("n", "<leader>we", ":tabmove +1<CR>", { desc = "Move tab right" })
-map("n", "<leader>wq", ":tabmove -1<CR>", { desc = "Move tab left" })
-map("n", "<leader>wo", ":tabmove 0<CR>", { desc = "Move current tab to beginning" })
-map("n", "<leader>wp", ":tabmove<CR>", { desc = "Move current tab to end" })
+map("n", "<leader>wq", ":tabclose<CR>", { desc = "Close tab" })
+map("n", "<leader>wn", ":tabmove +1<CR>", { desc = "Move tab right" })
+map("n", "<leader>wp", ":tabmove -1<CR>", { desc = "Move tab left" })
+map("n", "<leader>wg", ":tabmove 0<CR>", { desc = "Move current tab to beginning" })
+map("n", "<leader>wG", ":tabmove<CR>", { desc = "Move current tab to end" })
 
 map("n", "grf", vim.lsp.buf.format, { desc = "lsp: format" })
 map("n", "grd", vim.lsp.buf.definition, { desc = "lsp: definition" })

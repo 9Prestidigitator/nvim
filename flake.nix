@@ -79,7 +79,7 @@
           genericName = "Text Editor";
           comment = "Neovim (nightly) with ${cfg.appName} config";
           exec = "${cfg.appName} %F";
-          terminal = true; # Neovim is terminal-based
+          terminal = true;
           type = "Application";
           categories = ["Utility" "TextEditor" "Development"];
           mimeType = [

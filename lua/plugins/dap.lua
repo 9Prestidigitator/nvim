@@ -61,7 +61,6 @@ if env.is_nix() then
 else
 	codelldb_cmd = vim.fn.stdpath("data") .. "/mason/bin/codelldb"
 end
--- assert(type(codelldb_cmd) == "string" and codelldb_cmd ~= "", "codelldb command not found")
 
 dap.adapters.codelldb = {
 	name = "Launch codelldb server",
@@ -99,7 +98,6 @@ if env.is_nix() then
 else
 	netcoredbg_cmd = os.getenv("HOME") .. "/.local/share/nvim/mason/packages/netcoredbg/netcoredbg"
 end
--- assert(type(netcoredbg_cmd) == "string" and netcoredbg_cmd ~= "", "codelldb command not found")
 
 dap.adapters.coreclr = {
 	name = "Launch netcoredbg binary",

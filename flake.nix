@@ -92,7 +92,7 @@
             "text/x-python"
             "application/x-nix"
           ];
-          icon = ./logo.svg;
+          icon = ./logo.png;
         };
 
         xdg.mimeApps.enable = true;

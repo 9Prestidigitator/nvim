@@ -62,7 +62,7 @@ vim.lsp.config("clangd", {
 		"--header-insertion-decorators",
 		"--fallback-style=none",
 	},
-    filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+	filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
 })
 
 -- PYTHON

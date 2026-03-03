@@ -1,6 +1,7 @@
 local dap = require("dap")
 local dapui = require("dapui")
 -- This will take the most amount of work to make nix-aware, so I will put it off.
+local env = require("core.env")
 local tools = require("core.tools")
 
 dapui.setup()
@@ -24,7 +25,7 @@ dap.listeners.before.event_exited.dapui_config = function()
 	vim.keymap.del("n", "<leader>du")
 end
 
-require("dap-python").setup(os.getenv("HOME") .. "/.local/share/nvim/mason/packages/debugpy/venv/bin/python")
+require("dap-python").setup(vim.fn.exepath("python"))
 
 dap.configurations.python = {
 	{
@@ -47,19 +48,27 @@ dap.configurations.python = {
 				if venv_path then
 					return venv_path .. "/bin/python"
 				else
-					return "/usr/bin/python"
+					return vim.fn.exepath("python")
 				end
 			end
 		end,
 	},
 }
 
+local codelldb_cmd
+if env.is_nix() then
+    codelldb_cmd = vim.env.CODELLDB_PATH
+else
+    codelldb_cmd = vim.fn.exepath("codelldb")
+end
+assert(type(codelldb_cmd) == "string" and codelldb_cmd ~= "", "codelldb command not found")
+
 dap.adapters.codelldb = {
 	name = "Launch codelldb server",
 	type = "server",
 	port = "${port}",
 	executable = {
-		command = vim.fn.stdpath("data") .. "/mason/bin/codelldb",
+		command = codelldb_cmd,
 		args = { "--port", "${port}" },
 	},
 }
@@ -87,7 +96,7 @@ dap.configurations.rust = dap.configurations.c
 dap.adapters.coreclr = {
 	name = "Launch netcoredbg binary",
 	type = "executable",
-	command = os.getenv("HOME") .. "/.local/share/nvim/mason/packages/netcoredbg/netcoredbg",
+	command = vim.fn.exepath("netcoredbg"),
 	args = { "--interpreter=vscode" },
 }
 dap.configurations.cs = {
@@ -101,4 +110,6 @@ dap.configurations.cs = {
 	},
 }
 
-require("mason-nvim-dap").setup({ automatic_installation = true })
+require("mason-nvim-dap").setup({
+	automatic_installation = tools.mason_should_manage_tools(),
+})

@@ -57,9 +57,9 @@ dap.configurations.python = {
 
 local codelldb_cmd
 if env.is_nix() then
-    codelldb_cmd = vim.env.CODELLDB_PATH
+	codelldb_cmd = vim.env.CODELLDB_PATH
 else
-    codelldb_cmd = vim.fn.exepath("codelldb")
+	codelldb_cmd = vim.fn.stdpath("data") .. "/mason/bin/codelldb"
 end
 assert(type(codelldb_cmd) == "string" and codelldb_cmd ~= "", "codelldb command not found")
 
@@ -93,10 +93,18 @@ dap.configurations.c = {
 dap.configurations.cpp = dap.configurations.c
 dap.configurations.rust = dap.configurations.c
 
+local netcoredbg_cmd
+if env.is_nix() then
+	netcoredbg_cmd = vim.fn.exepath("netcoredbg")
+else
+	netcoredbg_cmd = os.getenv("HOME") .. "/.local/share/nvim/mason/packages/netcoredbg/netcoredbg"
+end
+assert(type(netcoredbg_cmd) == "string" and netcoredbg_cmd ~= "", "codelldb command not found")
+
 dap.adapters.coreclr = {
 	name = "Launch netcoredbg binary",
 	type = "executable",
-	command = vim.fn.exepath("netcoredbg"),
+	command = netcoredbg_cmd,
 	args = { "--interpreter=vscode" },
 }
 dap.configurations.cs = {

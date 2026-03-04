@@ -69,8 +69,6 @@ These are a good to have in you environment for a better experience. If you are 
 
 ## Debuggers
 
-This is not yet nix aware so it will be installed via mason everywhere.
-
 - codelldb
 - netcoredbg
 - debugpy

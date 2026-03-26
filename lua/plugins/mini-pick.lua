@@ -36,11 +36,9 @@ vim.api.nvim_create_user_command("PickAllFiles", function()
 	local icons = require("mini.icons")
 
 	local cwd = vim.uv.cwd()
-
 	cwd = vim.fs.normalize(vim.fn.fnamemodify(cwd, ":p"))
 	local cwd_pat = "^" .. vim.pesc(cwd:gsub("\\", "/")) .. "/?"
-
-	local ignore_dirs = { ".git", "build" }
+	local ignore_dirs = { ".git", "build", "target", "bin" }
 
 	local function is_ignored(abs)
 		local p = abs:gsub("\\", "/")

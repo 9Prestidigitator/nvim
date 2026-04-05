@@ -42,6 +42,7 @@ vim.pack.add({
     { src = "https://github.com/lewis6991/gitsigns.nvim" },
 	{ src = "https://github.com/sphamba/smear-cursor.nvim" }, --Animated Cursor
     { src = "https://github.com/OXY2DEV/markview.nvim" },
+    { src = "https://github.com/folke/flash.nvim" }, -- flash
     { src = "https://github.com/nvim-mini/mini.icons" }, -- Icons
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" }, -- webdev icons
 })

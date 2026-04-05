@@ -12,8 +12,11 @@ map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
 map("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Explorer" })
 map("n", "<leader>A", "<CMD>Alpha<CR>", { desc = "Home" })
-map("n", "<leader>lg", ":LazyGit<CR>", { desc = "git" })
-
+map("n", "<leader>lg", ":LazyGit<CR>", { desc = "lazygit" })
+map("n", "<leader>u", function()
+	vim.cmd("packadd nvim.undotree")
+	vim.cmd("Undotree")
+end, { desc = "Undotree" })
 
 map("n", "<leader>fg", ":Pick grep_live<CR>", { desc = "Find via ripgrep" })
 map("n", "<leader>ff", ":Pick files<CR>", { desc = "Find file in directory" })

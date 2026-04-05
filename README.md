@@ -92,6 +92,7 @@ These are a good to have in you environment for a better experience. If you are 
 - lazygit.nvim
 - obsidian.nvim
 - leetcode.nvim
+- flash.nvim
 
 ## LSP/Formatters/Debuggers
 
@@ -115,7 +116,7 @@ These are a good to have in you environment for a better experience. If you are 
 
 - mason.nvim
 - mason-lspconfig.nvim
-- mason-confirm.nvim
+- mason-conform.nvim
 - mason-nvim-dap.nvim
 
 ## Autocomplete

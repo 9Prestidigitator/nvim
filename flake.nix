@@ -48,7 +48,12 @@
       };
 
       flake = {
-        homeManagerModules.default = {config, lib, pkgs, ...}: let
+        homeManagerModules.default = {
+          config,
+          lib,
+          pkgs,
+          ...
+        }: let
           cfg = config.programs.Neovim;
           nvimPkg = neovim-nightly-overlay.packages.${pkgs.system}.default;
           nvimWrapper = pkgs.writeShellApplication {
@@ -99,32 +104,35 @@
           config = lib.mkIf cfg.enable {
             home.packages = [nvimWrapper];
 
-            xdg.desktopEntries.${cfg.appName} = {
-              name = "Neovim";
-              genericName = "Text Editor";
-              comment = "Neovim (nightly) with ${cfg.appName} config";
-              exec = "${cfg.appName} %F";
-              terminal = true;
-              type = "Application";
-              categories = ["Utility" "TextEditor" "Development"];
-              mimeType = [
-                "inode/directory"
-                "text/plain"
-                "text/markdown"
-                "text/x-shellscript"
-                "text/x-csrc"
-                "text/x-c++src"
-                "text/x-python"
-                "application/x-nix"
-              ];
-              icon = ./logo.png;
-            };
-
-            xdg.mimeApps.enable = true;
-            xdg.mimeApps.defaultApplications = {
-              "text/plain" = ["${cfg.appName}.desktop"];
-              "text/markdown" = ["${cfg.appName}.desktop"];
-              "application/x-nix" = ["${cfg.appName}.desktop"];
+            xdg = {
+              desktopEntries.${cfg.appName} = {
+                name = "Neovim";
+                genericName = "Text Editor";
+                comment = "Neovim (nightly) with ${cfg.appName} config";
+                exec = "${cfg.appName} %F";
+                terminal = true;
+                type = "Application";
+                categories = ["Utility" "TextEditor" "Development"];
+                mimeType = [
+                  "inode/directory"
+                  "text/plain"
+                  "text/markdown"
+                  "text/x-shellscript"
+                  "text/x-csrc"
+                  "text/x-c++src"
+                  "text/x-python"
+                  "application/x-nix"
+                ];
+                icon = ./logo.png;
+              };
+              mimeApps = {
+                enable = true;
+                defaultApplications = {
+                  "text/plain" = ["${cfg.appName}.desktop"];
+                  "text/markdown" = ["${cfg.appName}.desktop"];
+                  "application/x-nix" = ["${cfg.appName}.desktop"];
+                };
+              };
             };
 
             home.activation.NvimUpdate =

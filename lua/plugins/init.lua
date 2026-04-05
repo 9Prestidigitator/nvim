@@ -1,6 +1,5 @@
 vim.pack.add({
 	{ src = "https://github.com/neovim/nvim-lspconfig" }, -- LSPs
-	{ src = "https://github.com/j-hui/fidget.nvim" },
 	{ src = "https://github.com/stevearc/conform.nvim" }, -- Formatter
 
 	{ src = "https://github.com/mfussenegger/nvim-dap" }, -- DAP for Debugging
@@ -77,7 +76,6 @@ require("obsidian").setup({
 		enable = false,
 	},
 })
-require("fidget").setup()
 require("vague").setup({ transparent = true })
 require("nvim-surround").setup()
 require("nvim-autopairs").setup()

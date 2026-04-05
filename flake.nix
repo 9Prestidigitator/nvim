@@ -48,12 +48,7 @@
       };
 
       flake = {
-        config,
-        lib,
-        pkgs,
-        ...
-      }: {
-        homeManagerModules.default = let
+        homeManagerModules.default = {config, lib, pkgs, ...}: let
           cfg = config.programs.Neovim;
           nvimPkg = neovim-nightly-overlay.packages.${pkgs.system}.default;
           nvimWrapper = pkgs.writeShellApplication {

@@ -97,7 +97,6 @@ These are a good to have in you environment for a better experience. If you are 
 ## LSP/Formatters/Debuggers
 
 - nvim-lspconfig
-- fidget.nvim
 - conform.nvim
 - nvim-dap
 - nvim-dap-ui

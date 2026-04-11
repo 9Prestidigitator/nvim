@@ -26,10 +26,6 @@
         };
 
         devShells.default = pkgs.mkShell {
-          shellHook = ''
-            export SHELL="/run/current-system/sw/bin/bash"
-          '';
-
           packages = with pkgs; [
             lua-language-server
             stylua

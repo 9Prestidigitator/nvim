@@ -1,3 +1,4 @@
+local env = require("core.env")
 local o = vim.opt
 
 o.backup = false -- Don't create backup files
@@ -33,3 +34,6 @@ o.laststatus = 3
 o.splitbelow = true
 o.splitright = true
 o.timeoutlen = vim.g.vscode and 1000 or 300
+if env.is_nix() and vim.fn.executable("/run/current-system/sw/bin/bash") == 1 then
+	o.shell = "/run/current-system/sw/bin/bash"
+end

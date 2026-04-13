@@ -6,7 +6,7 @@ Nix-aware [Neovim](https://github.com/neovim/neovim) lua configuration.
 
 # Nix Flake
 
-This flake packages the required version of neovim (nightly) with the configuration.
+This flake packages my lua configuration with my preferred version of neovim (0.12+), ensuring that I write my neovim configuration in lua without nix-language abstraction.
 
 ## Home Manager Module
 
@@ -15,7 +15,7 @@ Add input to flake.
 ```nix
 {
   inputs = {
-    neovim.url = "github:9prestidigitator/nvim";
+    maxvim.url = "github:9prestidigitator/nvim";
   };
 }
 ```
@@ -27,16 +27,20 @@ Import the module in a home manager configuration:
   imports = [
     inputs.neovim.homeManagerModules.default
   ];
-  programs.Neovim = {
+  programs.maxvim = {
     enable = true;
-    autoUpdate = true;
+    name = "NvimCustom";
+    config = {
+      dir = "${config.xdg.configHome}/customNvimConfig"
+      autoUpdate = true;
+    };
   };
 }
 ```
 
 # External Tooling
 
-These are a good to have in you environment for a better experience. If you are using NixOS it is expected that you provide these packages via your dev shell or configuration, otherwise will be installed via Mason.
+These are a good to have in you environment for a better development experience. If you are using NixOS it is expected that you provide these packages via your dev shell or configuration, otherwise will be installed via Mason.
 
 ## LSPs
 
@@ -77,22 +81,28 @@ These are a good to have in you environment for a better experience. If you are 
 
 - [fd](https://github.com/BurntSushi/ripgrep)
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
+- [LazyGit](https://github.com/jesseduffield/lazygit)
 
 # Plugins
 
 ## Core
 
-- plenary.nvim
+- mini.pick
 - auto-session
 - alpha-nvim
 - nvim-autopairs
 - nvim-surround
 - which-key.nvim
-- nui.nvim
-- lazygit.nvim
-- obsidian.nvim
-- leetcode.nvim
 - flash.nvim
+- vimtex
+- obsidian.nvim
+- lazygit.nvim
+
+Might move these to another branch. They are large, somewhat unmaintained, and not always used:
+
+- plenary.nvim
+- nui.nvim
+- leetcode.nvim
 
 ## LSP/Formatters/Debuggers
 
@@ -100,11 +110,9 @@ These are a good to have in you environment for a better experience. If you are 
 - conform.nvim
 - nvim-dap
 - nvim-dap-ui
-- nvim-nio
 - nvim-dap-python
-- mini.pick
-- lazydev.nvim
-- vimtex
+- lazydev.nvim: For better lua parsing
+- nvim-nio
 
 ## File Explorer
 
@@ -113,12 +121,16 @@ These are a good to have in you environment for a better experience. If you are 
 
 ## Packaging
 
+Might move these to their own non-nix branch:
+
 - mason.nvim
 - mason-lspconfig.nvim
 - mason-conform.nvim
 - mason-nvim-dap.nvim
 
 ## Autocomplete
+
+Neovim has it's own native autocomplete. However last time I tried, it was buggy with OmniSharp.
 
 - nvim-cmp
 - cmp-nvim-lsp

@@ -87,16 +87,16 @@ These are a good to have in you environment for a better development experience.
 
 ## Core
 
-- mini.pick
-- auto-session
-- alpha-nvim
-- nvim-autopairs
-- nvim-surround
-- which-key.nvim
-- flash.nvim
-- vimtex
-- obsidian.nvim
-- lazygit.nvim
+- [mini.pick](https://github.com/nvim-mini/mini.pick): Picker.
+- [auto-session](https://github.com/rmagatti/auto-session): Automatically saves sessions.
+- [alpha-nvim](https://github.com/goolord/alpha-nvim): Greeter.
+- [nvim-autopairs](https://github.com/windwp/nvim-autopairs): Bracket/quote pairing.
+- [nvim-surround](https://github.com/kylechui/nvim-surround): Surrounding plugin.
+- [which-key.nvim](https://github.com/folke/which-key.nvim): Modal key viewer.
+- [flash.nvim](https://github.com/folke/flash.nvim): Cursor teleportation.
+- [vimtex](https://github.com/lervag/vimtex): Shortcuts to compile latex.
+- [obsidian.nvim](https://github.com/epwalsh/obsidian.nvim): Obsidian vault parsing.
+- [lazygit.nvim](https://github.com/kdheepak/lazygit.nvim): LazyGit window.
 
 Might move these to another branch. They are large, somewhat unmaintained, and not always used:
 
@@ -106,22 +106,20 @@ Might move these to another branch. They are large, somewhat unmaintained, and n
 
 ## LSP/Formatters/Debuggers
 
-- nvim-lspconfig
-- conform.nvim
-- nvim-dap
-- nvim-dap-ui
-- nvim-dap-python
-- lazydev.nvim: For better lua parsing
-- nvim-nio
+- [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
+- [conform.nvim](https://github.com/stevearc/conform.nvim): Lightweight formatter.
+- [nvim-dap](https://github.com/mfussenegger/nvim-dap)
+- [nvim-dap-python](https://github.com/mfussenegger/nvim-dap-python)
+- [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui)
+- [nvim-nio](https://github.com/nvim-neotest/nvim-nio): Dependency of nvim-dap-ui.
+- [lazydev.nvim](https://github.com/folke/lazydev.nvim): For better lua parsing.
 
 ## File Explorer
 
-- oil.nvim
-- oil-vcs-status
+- [oil.nvim](https://github.com/stevearc/oil.nvim)
+- [oil-vcs-status](https://github.com/SirZenith/oil-vcs-status)
 
 ## Packaging
-
-Might move these to their own non-nix branch:
 
 - mason.nvim
 - mason-lspconfig.nvim
@@ -132,7 +130,7 @@ Might move these to their own non-nix branch:
 
 Neovim has it's own native autocomplete. However last time I tried, it was buggy with OmniSharp.
 
-- nvim-cmp
+- [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)
 - cmp-nvim-lsp
 - cmp-buffer
 - cmp-path
@@ -140,10 +138,10 @@ Neovim has it's own native autocomplete. However last time I tried, it was buggy
 
 ## Appearance
 
-- vague.nvim
-- lualine.nvim
-- gitsigns.nvim
-- smear-cursor.nvim
-- markview.nvim
-- mini.icons
-- nvim-web-devicons
+- [vague.nvim](https://github.com/vague-theme/vague.nvim): Theme.
+- [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim)
+- [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim)
+- [smear-cursor.nvim](https://github.com/lewis6991/gitsigns.nvim)
+- [markview.nvim](https://github.com/OXY2DEV/markview.nvim)
+- [mini.icons](https://github.com/nvim-mini/mini.icons)
+- [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons)

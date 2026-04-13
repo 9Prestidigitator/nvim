@@ -1,15 +1,6 @@
 local map = vim.keymap.set
 
-map("n", "<C-h>", "<C-w>h", { silent = true })
-map("n", "<C-l>", "<C-w>l", { silent = true })
-map("n", "<C-j>", "<C-w>j", { silent = true })
-map("n", "<C-k>", "<C-w>k", { silent = true })
-
-map("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down", silent = true })
-map("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up", silent = true })
-map("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
-map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
-
+-- Portals
 map("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Explorer" })
 map("n", "<leader>A", "<CMD>Alpha<CR>", { desc = "Home" })
 map("n", "<leader>lg", ":LazyGit<CR>", { desc = "lazygit" })
@@ -18,6 +9,19 @@ map("n", "<leader>u", function()
 	vim.cmd("Undotree")
 end, { desc = "Undotree" })
 
+-- Window navigation
+map("n", "<C-h>", "<C-w>h", { silent = true })
+map("n", "<C-l>", "<C-w>l", { silent = true })
+map("n", "<C-j>", "<C-w>j", { silent = true })
+map("n", "<C-k>", "<C-w>k", { silent = true })
+
+-- Line swapping
+map("n", "<A-j>", ":m .+1<CR>==", { desc = "Swap line down", silent = true })
+map("n", "<A-k>", ":m .-2<CR>==", { desc = "Swap line up", silent = true })
+map("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Swap selection down" })
+map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Swap selection up" })
+
+-- Find
 map("n", "<leader>fg", ":Pick grep_live<CR>", { desc = "Find via ripgrep" })
 map("n", "<leader>ff", ":Pick files<CR>", { desc = "Find file in directory" })
 map("n", "<leader>fF", ":PickAllFiles<CR>", { desc = "Find all files in dir" })
@@ -26,6 +30,14 @@ map("n", "<leader>fr", ":PickRecentFiles<CR>", { desc = "Find recent files" })
 map("n", "<leader>fh", ":Pick help<CR>", { desc = "Find help" })
 map("n", "<leader>fm", ":PickKeymaps<CR>", { desc = "Find mappings" })
 map("n", "<leader>ft", ":PickTabs<CR>", { desc = "Find tabs" })
+
+-- Flash
+map({ "n", "x", "o" }, "s", function()
+	require("flash").jump()
+end, { desc = "Flash" })
+map("o", "r", function()
+	require("flash").remote()
+end, { desc = "Remote Flash" })
 
 -- Buffer binds
 map("n", "<leader>bw", ":bw<CR>", { desc = "Wipeout Buffer" })
@@ -44,6 +56,7 @@ map("n", "<leader>wp", ":tabmove -1<CR>", { desc = "Move tab left" })
 map("n", "<leader>wg", ":tabmove 0<CR>", { desc = "Move current tab to beginning" })
 map("n", "<leader>wG", ":tabmove<CR>", { desc = "Move current tab to end" })
 
+-- Backup LSP commands
 map("n", "grf", vim.lsp.buf.format, { desc = "lsp: format" })
 map("n", "grd", vim.lsp.buf.definition, { desc = "lsp: definition" })
 map("n", "grk", vim.lsp.buf.hover, { desc = "lsp: hover" })
@@ -51,9 +64,9 @@ map("n", "grw", function()
 	print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
 end, { desc = "List LSP workspace folders." })
 
+-- Quick commenting
 map({ "n" }, "<leader>/", "gcc", { desc = "Toggle Comment", remap = true })
 map({ "v" }, "<leader>/", "gc", { desc = "Toggle Comment", remap = true })
-map({ "n" }, "<Esc>", "<CMD>noh<CR>", { silent = true })
 
 -- <C-s> to save as universal default, just intuitive for me
 map("n", "<C-s>", "<CMD>w<CR>", { desc = "Save (write) file" })
@@ -63,8 +76,11 @@ map("i", "<C-s>", "<Esc>:w<CR>a", { desc = "Save (write) file" })
 map({ "n", "v", "x" }, "<leader>y", '"+y', { desc = "Yank to clipboard" })
 map({ "n", "v", "x" }, "<leader>p", '"+p', { desc = "Paste from clipboard" })
 
+-- Indentation
 map("v", "<", "<gv", { desc = "Indent left and reselect" })
 map("v", ">", ">gv", { desc = "Indent right and reselect" })
+
+-- Cursor centering
 map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 map("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
@@ -81,6 +97,7 @@ map("n", "<A-m>", function()
 		vim.api.nvim_win_set_cursor(0, { row, center_col })
 	end
 end, { desc = "Cursor to center of line" })
+map({ "n" }, "<Esc>", "<CMD>noh<CR>", { silent = true })
 
 -- DAP Debugging commands
 map("n", "<leader>db", "<cmd> DapToggleBreakpoint <cr>", { desc = "Add breakpoint at line" })

@@ -46,24 +46,26 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" }, -- webdev icons
 })
 
+-- Needs to be set up first
 require("mason").setup()
 
 require("plugins.mini-pick")
+require("plugins.auto-sessions")
 require("plugins.alpha")
 require("plugins.lsp")
+require("plugins.flash")
 require("plugins.conform")
 require("plugins.dap")
 require("plugins.oil")
 require("plugins.cmp")
 require("plugins.lualine")
 require("plugins.which-key")
-require("plugins.auto-sessions")
 require("plugins.smear-cursor")
+require("plugins.vimtex")
 
 require("leetcode").setup({
 	lang = "rust",
 })
-require("plugins.vimtex")
 require("markview").setup()
 require("obsidian").setup({
 	workspaces = {

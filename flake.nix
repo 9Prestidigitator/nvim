@@ -1,5 +1,5 @@
 {
-  description = "Neovim";
+  description = "maxvim";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -7,24 +7,10 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
-  outputs = inputs @ {
-    nixpkgs,
-    flake-parts,
-    neovim-nightly-overlay,
-    ...
-  }:
+  outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-      perSystem = {
-        system,
-        pkgs,
-        ...
-      }: {
-        _module.args.pkgs = import nixpkgs {
-          inherit system;
-          overlays = [neovim-nightly-overlay.overlays.default];
-        };
-
+      perSystem = {pkgs, ...}: {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             lua-language-server
@@ -50,62 +36,72 @@
           pkgs,
           ...
         }: let
-          cfg = config.programs.Neovim;
-          nvimPkg = neovim-nightly-overlay.packages.${pkgs.system}.default;
+          cfg = config.programs.maxvim;
+          effectiveAppName = baseNameOf cfg.config.dir;
+          effectiveConfigHome = dirOf cfg.config.dir;
+
           nvimWrapper = pkgs.writeShellApplication {
-            name = "${cfg.appName}";
-            runtimeInputs = [nvimPkg];
+            name = cfg.name;
+            runtimeInputs = [cfg.package];
             text = ''
               set -euo pipefail
-              export NVIM_APPNAME="${cfg.appName}"
-              exec "${nvimPkg}/bin/nvim" "$@"
+              export NVIM_APPNAME="${effectiveAppName}"
+              export XDG_CONFIG_HOME="${effectiveConfigHome}"
+              exec "${cfg.package}/bin/nvim" "$@"
             '';
           };
         in {
-          options.programs.Neovim = {
-            enable = lib.mkEnableOption "Personal Neovim config + nightly";
+          options.programs.maxvim = {
+            enable = lib.mkEnableOption "Personal Neovim config";
 
-            repo = lib.mkOption {
-              type = lib.types.str;
-              default = "https://github.com/9Prestidigitator/nvim.git";
-              description = "Git repo containing configuration";
-            };
-            branch = lib.mkOption {
-              type = lib.types.str;
-              default = "main";
-              description = "Branch of git repository to use.";
-            };
-            appName = lib.mkOption {
+            name = lib.mkOption {
               type = lib.types.str;
               default = "nvim";
-              description = "NVIM_APPNAME used for XDG dirs (config/data/state/cache)";
+              description = "Neovim app identity. Defaults to `nvim'.";
             };
-            autoUpdate = lib.mkOption {
+            package = lib.mkOption {
+              type = lib.types.package;
+              default = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
+              description = "Neovim package to use. Minimum required version is 0.12. Nightly by default.";
+            };
+            desktopIntegration = lib.mkOption {
               type = lib.types.bool;
               default = true;
-              description = "Whether to update via git pull (ff-only) during activation.";
+              description = "Whether to add desktop file.";
             };
-            configHome = lib.mkOption {
-              type = lib.types.str;
-              default = "${config.home.homeDirectory}/.config";
-              description = "Config directory (~/.config).";
-            };
-            configDir = lib.mkOption {
-              type = lib.types.str;
-              default = "${cfg.configHome}/${cfg.appName}";
-              description = "Directory where the config repo lives.";
+            config = {
+              dir = lib.mkOption {
+                type = lib.types.str;
+                default = "${config.xdg.configHome}/nvim";
+                description = "Directory where the git managed config lives.";
+              };
+              repo = lib.mkOption {
+                type = lib.types.str;
+                default = "https://github.com/9Prestidigitator/nvim.git";
+                description = "Git repo containing configuration";
+              };
+              branch = lib.mkOption {
+                type = lib.types.str;
+                default = "main";
+                description = "Branch of git repository to use.";
+              };
+              autoUpdate = lib.mkOption {
+                type = lib.types.bool;
+                default = true;
+                description = "Whether to update via git pull (ff-only) during activation.";
+              };
             };
           };
 
           config = lib.mkIf cfg.enable {
             home.packages = [nvimWrapper];
 
-            xdg = {
-              desktopEntries.${cfg.appName} = {
+            xdg = lib.mkIf cfg.desktopIntegration {
+              desktopEntries.${cfg.name} = {
                 name = "Neovim";
                 genericName = "Text Editor";
-                comment = "Neovim (nightly) with ${cfg.appName} config";
-                exec = "${cfg.appName} %F";
+                comment = "Neovim using ${cfg.config.dir}";
+                exec = "${cfg.name} %F";
                 terminal = true;
                 type = "Application";
                 categories = ["Utility" "TextEditor" "Development"];
@@ -124,25 +120,24 @@
               mimeApps = {
                 enable = true;
                 defaultApplications = {
-                  "text/plain" = ["${cfg.appName}.desktop"];
-                  "text/markdown" = ["${cfg.appName}.desktop"];
-                  "application/x-nix" = ["${cfg.appName}.desktop"];
+                  "text/plain" = ["${cfg.name}.desktop"];
+                  "text/markdown" = ["${cfg.name}.desktop"];
+                  "application/x-nix" = ["${cfg.name}.desktop"];
                 };
               };
             };
 
             home.activation.NvimUpdate =
               lib.hm.dag.entryAfter ["writeBoundary"]
-              (lib.mkIf cfg.autoUpdate ''
+              (lib.mkIf cfg.config.autoUpdate ''
                 set -euo pipefail
 
-                dst="${cfg.configDir}"
-                repo="${cfg.repo}"
-                branch="${cfg.branch}"
+                dst="${cfg.config.dir}"
+                repo="${cfg.config.repo}"
+                branch="${cfg.config.branch}"
 
-                mkdir -p "${cfg.configHome}"
+                mkdir -p "$(dirname "$dst")"
 
-                # Only ff when not detached, has upstream, clean working tree
                 if [ -d "$dst/.git" ]; then
                   if [ "$(${pkgs.git}/bin/git -C "$dst" rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)" != "HEAD" ] &&
                      ${pkgs.git}/bin/git -C "$dst" rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1 &&
@@ -150,7 +145,6 @@
                     ${pkgs.git}/bin/git -C "$dst" pull --ff-only || true
                   fi
                 else
-                # Clone only if missing/empty; never overwrite non-empty non-git dirs
                   if [ -e "$dst" ] && [ -n "$(ls -A "$dst" 2>/dev/null || true)" ]; then
                     echo "neovim: $dst exists and is not empty (and not a git repo); not overwriting."
                   else

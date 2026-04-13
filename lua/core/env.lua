@@ -12,7 +12,7 @@ end
 
 -- Check if Nix is on system
 function M.is_nix()
-	if M.is_nixos then
+	if M.is_nixos() then
 		return true
 	end
 

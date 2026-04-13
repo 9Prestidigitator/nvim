@@ -25,7 +25,7 @@ Import the module in a home manager configuration:
 ```nix
 {
   imports = [
-    inputs.neovim.homeManagerModules.default
+    inputs.maxvim.homeManagerModules.default
   ];
   programs.maxvim = {
     enable = true;

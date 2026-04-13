@@ -57,7 +57,7 @@
             name = lib.mkOption {
               type = lib.types.str;
               default = "nvim";
-              description = "Neovim app identity. Defaults to `nvim'.";
+              description = "Executable and desktop-entry name.";
             };
             package = lib.mkOption {
               type = lib.types.package;

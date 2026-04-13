@@ -38,6 +38,9 @@ end, { desc = "Flash" })
 map("o", "r", function()
 	require("flash").remote()
 end, { desc = "Remote Flash" })
+map("c", "<C-s>", function()
+	require("flash").toggle()
+end, { desc = "Toggle Flash Search" })
 
 -- Buffer binds
 map("n", "<leader>bw", ":bw<CR>", { desc = "Wipeout Buffer" })

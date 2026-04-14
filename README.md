@@ -38,11 +38,11 @@ Import the module in a home manager configuration:
 }
 ```
 
-# External Tooling
+## External Tooling
 
 These are a good to have in you environment for a better development experience. If you are using NixOS it is expected that you provide these packages via your dev shell or configuration, otherwise will be installed via Mason.
 
-## LSPs
+### LSPs
 
 - Rust Analyzer
 - Clangd
@@ -57,7 +57,7 @@ These are a good to have in you environment for a better development experience.
 - TS Language Server
 - nixd
 
-## Formatters
+### Formatters
 
 - clang-format
 - alejandra
@@ -71,21 +71,21 @@ These are a good to have in you environment for a better development experience.
 - taplo
 - jq
 
-## Debuggers
+### Debuggers
 
 - codelldb
 - netcoredbg
 - debugpy
 
-## Programs
+### Programs
 
 - [fd](https://github.com/BurntSushi/ripgrep)
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
 - [LazyGit](https://github.com/jesseduffield/lazygit)
 
-# Plugins
+## Plugins
 
-## Core
+### Core
 
 - [mini.pick](https://github.com/nvim-mini/mini.pick): Picker.
 - [auto-session](https://github.com/rmagatti/auto-session): Automatically saves sessions.
@@ -104,7 +104,7 @@ Might move these to another branch. They are large, somewhat unmaintained, and n
 - nui.nvim
 - leetcode.nvim
 
-## LSP/Formatters/Debuggers
+### LSP/Formatters/Debuggers
 
 - [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
 - [conform.nvim](https://github.com/stevearc/conform.nvim): Lightweight formatter.
@@ -114,19 +114,19 @@ Might move these to another branch. They are large, somewhat unmaintained, and n
 - [nvim-nio](https://github.com/nvim-neotest/nvim-nio): Dependency of nvim-dap-ui.
 - [lazydev.nvim](https://github.com/folke/lazydev.nvim): For better lua parsing.
 
-## File Explorer
+### File Explorer
 
 - [oil.nvim](https://github.com/stevearc/oil.nvim)
 - [oil-vcs-status](https://github.com/SirZenith/oil-vcs-status)
 
-## Packaging
+### Packaging
 
 - mason.nvim
 - mason-lspconfig.nvim
 - mason-conform.nvim
 - mason-nvim-dap.nvim
 
-## Autocomplete
+### Autocomplete
 
 Neovim has it's own native autocomplete. However last time I tried, it was buggy with OmniSharp.
 
@@ -136,7 +136,7 @@ Neovim has it's own native autocomplete. However last time I tried, it was buggy
 - cmp-path
 - cmp-cmdline
 
-## Appearance
+### Appearance
 
 - [vague.nvim](https://github.com/vague-theme/vague.nvim): Theme.
 - [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim)

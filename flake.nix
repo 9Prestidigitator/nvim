@@ -72,18 +72,23 @@
             config = {
               dir = lib.mkOption {
                 type = lib.types.str;
-                default = "${config.xdg.configHome}/nvim";
+                default = "${config.xdg.configHome}/mvim";
                 description = "Directory where the git managed config lives.";
               };
-              repo = lib.mkOption {
+              cloneUrl = lib.mkOption {
                 type = lib.types.str;
                 default = "https://github.com/9Prestidigitator/nvim.git";
-                description = "Git repo containing configuration";
+                description = "Url to clone in the pace of the neovim configuration.";
               };
               branch = lib.mkOption {
                 type = lib.types.str;
                 default = "main";
                 description = "Branch of git repository to use.";
+              };
+              pushUrl = lib.mkOption {
+                type = lib.types.nullOr lib.types.str;
+                default = "git@github.com:9Prestidigitator/nvim.git";
+                description = "Url to push to origin.";
               };
               autoUpdate = lib.mkOption {
                 type = lib.types.bool;
@@ -133,8 +138,9 @@
                 set -euo pipefail
 
                 dst="${cfg.config.dir}"
-                repo="${cfg.config.repo}"
+                repo="${cfg.config.cloneUrl}"
                 branch="${cfg.config.branch}"
+                pushUrl="${cfg.config.pushUrl}"
 
                 mkdir -p "$(dirname "$dst")"
 
@@ -150,6 +156,10 @@
                   else
                     rm -rf "$dst"
                     ${pkgs.git}/bin/git clone --branch "$branch" "$repo" "$dst"
+                    if [ -d "$pushUrl" ]; then
+                      cd "$dst"
+                      ${pkgs.git}/bin/git remote set-url --push origin "$pushUrl"
+                    fi
                   fi
                 fi
               '');

@@ -12,15 +12,13 @@ function _G.ToggleTerminal() -- This is the main function to toggle the terminal
 		vim.cmd("botright 12split")
 		-- Check if we have a valid terminal buffer stored
 		if _G.term_buf_id and vim.api.nvim_buf_is_valid(_G.term_buf_id) then
-			-- Reuse the existing terminal buffer
 			vim.api.nvim_win_set_buf(0, _G.term_buf_id)
 		else
-			-- Create a new terminal
 			vim.cmd("terminal")
 			_G.term_buf_id = vim.api.nvim_get_current_buf()
 		end
 		vim.cmd("startinsert")
-		_G.term_win_id = vim.api.nvim_get_current_win() -- Store the new window's ID
+		_G.term_win_id = vim.api.nvim_get_current_win()
 	end
 end
 

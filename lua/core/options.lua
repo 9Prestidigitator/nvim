@@ -34,6 +34,7 @@ o.laststatus = 3
 o.splitbelow = true
 o.splitright = true
 o.timeoutlen = vim.g.vscode and 1000 or 300
+
 o.shell = "bash"
 o.shellcmdflag = "-i"
 if env.is_nixos() and vim.fn.executable("/run/current-system/sw/bin/bash") == 1 then

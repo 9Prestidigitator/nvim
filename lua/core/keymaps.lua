@@ -100,7 +100,8 @@ map("n", "<A-m>", function()
 		vim.api.nvim_win_set_cursor(0, { row, center_col })
 	end
 end, { desc = "Cursor to center of line" })
-map({ "n" }, "<Esc>", "<CMD>noh<CR>", { silent = true })
+map("n", "<Esc>", "<CMD>noh<CR>", { silent = true })
+map("n", "<C-c>", "<C-a>", { desc = "Incrementnext number" })
 
 -- DAP Debugging commands
 map("n", "<leader>db", "<cmd> DapToggleBreakpoint <cr>", { desc = "Add breakpoint at line" })
@@ -118,4 +119,4 @@ map("n", "<leader>dx", function()
 end, { desc = "Debugger: Quit" })
 
 -- Map a key in NORMAL mode to open/close the terminal
-map("n", "<leader>t", _G.ToggleTerminal, { desc = "Toggle terminal" })
+map("n", "<leader>tt", _G.ToggleTerminal, { desc = "Toggle terminal" })

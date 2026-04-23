@@ -6,6 +6,7 @@ o.writebackup = false -- Don't create backup before writing
 o.undofile = true
 o.swapfile = false
 o.showmode = false
+o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,localoptions"
 
 o.number = true
 o.relativenumber = true

@@ -5,4 +5,3 @@ require("auto-session").setup({
 		"~/Downloads",
 	},
 })
-vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,localoptions"

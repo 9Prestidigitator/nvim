@@ -11,6 +11,7 @@ require("which-key").setup({
 			{ "<leader>w", group = "Tabs" },
 			{ "<leader>l", group = "lazy" },
 			{ "<leader>v", group = "Vimtex" },
+			{ "<leader>x", group = "External" },
 			{ "[", group = "prev" },
 			{ "]", group = "next" },
 			{ "g", group = "goto" },

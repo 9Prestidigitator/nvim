@@ -63,6 +63,9 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "tex",
 	callback = function()
+		vim.opt_local.shiftwidth = 2
+		vim.opt_local.tabstop = 2
+		vim.opt_local.softtabstop = 2
 		vim.keymap.set("n", "<leader>vc", ":VimtexCompile<CR>", { desc = "Compile Latex document." })
 		vim.keymap.set("n", "<leader>vr", ":VimtexReload<CR>", { desc = "Reload Latex document." })
 		vim.keymap.set("n", "<leader>vs", ":VimtexStop<CR>", { desc = "Stop Compiling Latex document." })

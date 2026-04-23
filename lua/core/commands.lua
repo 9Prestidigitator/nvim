@@ -1,16 +1,12 @@
-_G.term_win_id = nil -- Store the window ID in a global variable to track it
+_G.term_win_id = nil
 _G.term_buf_id = nil
 
-function _G.ToggleTerminal() -- This is the main function to toggle the terminal
-	-- Check if the stored window ID is still valid
+function _G.ToggleTerminal()
 	if _G.term_win_id and vim.api.nvim_win_is_valid(_G.term_win_id) then
-		-- Hide the window and clear our variable
 		vim.api.nvim_win_hide(_G.term_win_id)
 		_G.term_win_id = nil
 	else
-		-- If not, create a new terminal (or reuse existing buffer)
 		vim.cmd("botright 12split")
-		-- Check if we have a valid terminal buffer stored
 		if _G.term_buf_id and vim.api.nvim_buf_is_valid(_G.term_buf_id) then
 			vim.api.nvim_win_set_buf(0, _G.term_buf_id)
 		else

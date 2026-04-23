@@ -8,6 +8,10 @@ map("n", "<leader>u", function()
 	vim.cmd("packadd nvim.undotree")
 	vim.cmd("Undotree")
 end, { desc = "Undotree" })
+map("n", "<leader>xe", function()
+	local dir = vim.fn.getcwd()
+	vim.fn.jobstart({ "xdg-open", dir }, { detach = true })
+end, { desc = "Open cwd in system file explorer" })
 
 -- Window navigation
 map("n", "<C-h>", "<C-w>h", { silent = true })
@@ -88,7 +92,6 @@ map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 map("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
 map("n", "<C-u>", "<C-u>zz", { desc = "Half page up (centered)" })
-map("i", "<C-h>", "<C-W>", { desc = "Delete word" })
 map("n", "<A-m>", function()
 	local line = vim.api.nvim_get_current_line()
 	local row = vim.api.nvim_win_get_cursor(0)[1]
@@ -100,8 +103,6 @@ map("n", "<A-m>", function()
 		vim.api.nvim_win_set_cursor(0, { row, center_col })
 	end
 end, { desc = "Cursor to center of line" })
-map("n", "<Esc>", "<CMD>noh<CR>", { silent = true })
-map("n", "<C-c>", "<C-a>", { desc = "Incrementnext number" })
 
 -- DAP Debugging commands
 map("n", "<leader>db", "<cmd> DapToggleBreakpoint <cr>", { desc = "Add breakpoint at line" })
@@ -118,5 +119,10 @@ map("n", "<leader>dx", function()
 	require("dap").disconnect()
 end, { desc = "Debugger: Quit" })
 
--- Map a key in NORMAL mode to open/close the terminal
+-- Terminals
 map("n", "<leader>tt", _G.ToggleTerminal, { desc = "Toggle terminal" })
+
+-- etc
+map("n", "<Esc>", "<CMD>noh<CR>", { silent = true })
+map("i", "<C-h>", "<C-W>", { desc = "Delete word" })
+map("n", "<C-c>", "<C-a>", { desc = "Increment next number" })

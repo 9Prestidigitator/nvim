@@ -46,19 +46,21 @@ local function terminal_cmd()
 	return { vim.env.SHELL or "sh" }
 end
 
-local function close_terminal_window()
-	local win = visible_terminal_win() or state.win
+local function close_terminal_windows()
+	float_win.close_wins_for_buf(state.buf)
+	state.win = nil
+end
 
+local function close_terminal_window(win)
+	win = win or visible_terminal_win() or state.win
 	if float_win.valid_win(win) then
 		float_win.close(win)
 	end
-
 	state.win = nil
-	-- Keep state.layout. It stores the last-used layout.
 end
 
 function M.close()
-	close_terminal_window()
+	close_terminal_windows()
 end
 
 local function feedkeys(keys)
@@ -217,9 +219,7 @@ function M.toggle(layout)
 		return
 	end
 
-	if current then
-		close_terminal_window()
-	end
+    close_terminal_windows()
 
 	local opener = open_layout[layout]
 	if not opener then

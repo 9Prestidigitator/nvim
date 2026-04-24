@@ -51,6 +51,29 @@ function M.visible_win_for_buf(buf)
 	return nil
 end
 
+function M.wins_for_buf(buf)
+	if not M.valid_buf(buf) then
+		return {}
+	end
+	local wins = {}
+	for _, tabpage in ipairs(vim.api.nvim_list_tabpages()) do
+		for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
+			if M.valid_win(win) and vim.api.nvim_win_get_buf(win) == buf then
+				table.insert(wins, win)
+			end
+		end
+	end
+	return wins
+end
+
+function M.close_wins_for_buf(buf, except_win)
+	for _, win in ipairs(M.wins_for_buf(buf)) do
+		if win ~= except_win then
+			M.close(win)
+		end
+	end
+end
+
 local function percent_or_absolute(value, total, minimum)
 	local resolved = value <= 1 and math.floor(total * value) or value
 	return math.max(resolved, minimum or 1)

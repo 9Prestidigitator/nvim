@@ -1,4 +1,25 @@
 local map = vim.keymap.set
+local terminal = require("core.terminal")
+
+-- Terminals
+map("n", "<leader>th", function()
+	terminal.toggle("left")
+end, { desc = "Terminal left" })
+map("n", "<leader>tl", function()
+	terminal.toggle("right")
+end, { desc = "Terminal right" })
+map("n", "<leader>tj", function()
+	terminal.toggle("bottom")
+end, { desc = "Terminal bottom" })
+map("n", "<leader>tk", function()
+    terminal.toggle("top")
+end, { desc = "Toggle top" })
+map("n", "<leader>tg", function()
+	terminal.toggle("float")
+end, { desc = "Terminal float" })
+map("n", "<leader>tt", function()
+	terminal.toggle()
+end, { desc = "Toggle terminal" })
 
 -- Portals
 map("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Explorer" })
@@ -118,9 +139,6 @@ map("n", "<leader>dx", function()
 	require("dap").terminate()
 	require("dap").disconnect()
 end, { desc = "Debugger: Quit" })
-
--- Terminals
-map("n", "<leader>tt", _G.ToggleTerminal, { desc = "Toggle terminal" })
 
 -- etc
 map("n", "<Esc>", "<CMD>noh<CR>", { silent = true })

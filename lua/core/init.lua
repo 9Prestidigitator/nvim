@@ -1,6 +1,5 @@
 require("core.options")
 require("core.globals")
 require("core.autocmds")
-require("core.terminal")
 require("core.keymaps")
 require("core.env")

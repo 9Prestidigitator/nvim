@@ -68,6 +68,7 @@ local function close_terminal_window()
 	local win = visible_terminal_win() or state.win
 
 	if valid_win(win) then
+		float_win.untrack(win)
 		pcall(vim.api.nvim_win_close, win, true)
 	end
 
@@ -204,7 +205,13 @@ local function open_bottom(buf)
 end
 
 local function open_float(buf)
-	return vim.api.nvim_open_win(buf, true, float_win.centered_config(config.float))
+	return float_win.open(buf, true, function()
+		return config.float
+	end, function(win)
+		if valid_buf(state.buf) then
+			float_win.resize_term_job(vim.b[state.buf].terminal_job_id, win)
+		end
+	end)
 end
 
 local open_layout = {
@@ -214,21 +221,6 @@ local open_layout = {
 	bottom = open_bottom,
 	float = open_float,
 }
-
-local function resize_float()
-	if state.layout ~= "float" then
-		return
-	end
-
-	if not valid_buf(state.buf) then
-		return
-	end
-
-	local win = visible_terminal_win() or state.win
-	if float_win.resize(win, config.float) then
-		float_win.resize_term_job(vim.b[state.buf].terminal_job_id, win)
-	end
-end
 
 function M.toggle(layout)
 	layout = layout or state.layout or "bottom"
@@ -253,16 +245,15 @@ function M.toggle(layout)
 	local buf = ensure_terminal_buffer()
 	local win = opener(buf)
 
-	if layout == "float" then
-		float_win.resize(win, config.float)
-	end
-
-	float_win.resize_term_job(vim.b[buf].terminal_job_id, win)
-
 	state.win = win
 	state.layout = layout
 
 	apply_terminal_window_options(win)
+
+	if layout ~= "float" then
+		float_win.resize_term_job(vim.b[buf].terminal_job_id, win)
+	end
+
 	vim.api.nvim_set_current_win(win)
 	vim.cmd.startinsert()
 end
@@ -271,10 +262,6 @@ function M.setup(opts)
 	config = vim.tbl_deep_extend("force", config, opts or {})
 
 	vim.api.nvim_clear_autocmds({ group = augroup })
-
-	float_win.on_resize(augroup, resize_float, {
-		debounce_ms = 60,
-	})
 
 	vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
 		group = augroup,

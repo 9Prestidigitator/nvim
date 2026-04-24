@@ -18,7 +18,7 @@ local config = {
 	apps = {},
 }
 
-local augroup = vim.api.nvim_create_augroup("MaxvimFloatTui", { clear = true })
+local augroup = vim.api.nvim_create_augroup("FloatTui", { clear = true })
 
 local valid_win = float_win.valid_win
 local valid_buf = float_win.valid_buf
@@ -27,11 +27,9 @@ local function normalize_cmd(cmd)
 	if type(cmd) == "function" then
 		cmd = cmd()
 	end
-
 	if type(cmd) == "string" then
 		return { cmd }
 	end
-
 	return cmd
 end
 
@@ -92,15 +90,12 @@ local function apply_window_options(win)
 	float_win.apply_minimal_options(win)
 end
 
-local function window_config(app)
-	return float_win.centered_config(app)
-end
-
 function M.hide(name)
 	local s = app_state(name)
 	local win = visible_win_for_buf(s.buf) or s.win
 
 	if valid_win(win) then
+		float_win.untrack(win)
 		pcall(vim.api.nvim_win_close, win, true)
 	end
 
@@ -226,13 +221,15 @@ function M.open(name)
 		return
 	end
 
-	local win = vim.api.nvim_open_win(buf, true, window_config(app))
+	local win = float_win.open(buf, true, function()
+		return app_config(name) or app
+	end, function(resized_win)
+		float_win.resize_term_job(s.job, resized_win)
+	end)
 
 	s.win = win
 
 	apply_window_options(win)
-	float_win.resize(win, app)
-	float_win.resize_term_job(s.job, win)
 	vim.api.nvim_set_current_win(win)
 	vim.cmd.startinsert()
 end
@@ -318,19 +315,6 @@ local function create_app_command(name)
 	end, {})
 end
 
-local function resize_open_windows()
-	for name, s in pairs(state) do
-		local app = app_config(name)
-		local win = visible_win_for_buf(s.buf) or s.win
-		if app and valid_buf(s.buf) and valid_win(win) then
-			s.win = win
-			if float_win.resize(win, app) then
-				float_win.resize_term_job(s.job, win)
-			end
-		end
-	end
-end
-
 function M.register(name, spec)
 	config.apps[name] = vim.tbl_deep_extend("force", config.apps[name] or {}, spec or {})
 
@@ -347,10 +331,6 @@ function M.setup(opts)
 	config = vim.tbl_deep_extend("force", config, opts)
 
 	vim.api.nvim_clear_autocmds({ group = augroup })
-
-	float_win.on_resize(augroup, resize_open_windows, {
-		debounce_ms = 60,
-	})
 
 	create_generic_command()
 

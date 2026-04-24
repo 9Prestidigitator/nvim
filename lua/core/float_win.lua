@@ -1,6 +1,8 @@
 local M = {}
 
-local resize_states = {}
+local tracked_windows = {}
+local resize_augroup = vim.api.nvim_create_augroup("FloatWindow", { clear = true })
+local resize_delay_ms = 20
 
 function M.valid_win(win)
 	return win and vim.api.nvim_win_is_valid(win)
@@ -23,18 +25,16 @@ function M.visible_win_for_buf(buf)
 	if not M.valid_buf(buf) then
 		return nil
 	end
-
 	for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
 		if M.valid_win(win) and vim.api.nvim_win_get_buf(win) == buf then
 			return win
 		end
 	end
-
 	return nil
 end
 
 local function percent_or_absolute(value, total, min)
-	local resolved = value <= 1 and math.floor(total * value) or value
+	local resolved = value <= 1 and math.ceil(total * value) or value
 	return math.max(resolved, min or 1)
 end
 
@@ -46,7 +46,7 @@ function M.centered_config(opts)
 	opts = opts or {}
 
 	local columns = vim.o.columns
-	local lines = vim.o.lines - vim.o.cmdheight
+	local lines = vim.o.lines
 
 	local border_extra = has_border(opts.border) and 2 or 0
 	local margin = opts.margin or 2
@@ -72,77 +72,43 @@ function M.centered_config(opts)
 		zindex = opts.zindex or 50,
 		width = width,
 		height = height,
-		row = math.max(0, math.floor((lines - total_height) / 2)),
-		col = math.max(0, math.floor((columns - total_width) / 2)),
+		row = math.max(0, math.ceil(lines - total_height) / 2),
+		col = math.max(0, math.ceil(columns - total_width) / 2),
 	}
 end
 
-function M.on_resize(group, callback, opts)
-	opts = opts or {}
-
-	local debounce_ms = opts.debounce_ms or opts.settle_ms or 40
-	local group_key = tostring(group)
-	local state = resize_states[group_key] or {}
-
-	if state.timer then
-		state.timer:stop()
-	end
-	state.timer = vim.uv.new_timer()
-	state.seq = 0
-	state.last_columns = vim.o.columns
-	state.last_lines = vim.o.lines
-	resize_states[group_key] = state
-
-	local function fire()
-		vim.schedule(function()
-			if vim.v.exiting and vim.v.exiting ~= 0 then
-				return
-			end
-			callback()
-		end)
+local function resolve_opts(opts)
+	if type(opts) == "function" then
+		opts = opts()
 	end
 
-	local function request_resize()
-		state.seq = state.seq + 1
-		local seq = state.seq
+	return opts or {}
+end
 
-		state.timer:stop()
-		state.timer:start(debounce_ms, 0, function()
-			if state.timer:is_closing() or seq ~= state.seq then
-				return
-			end
-			fire()
-		end)
+local function apply_tracked_resize(win)
+	local entry = tracked_windows[win]
+	if not entry then
+		return false
 	end
 
-	vim.api.nvim_create_autocmd({ "VimResized", "WinResized" }, {
-		group = group,
-		callback = function()
-			local columns = vim.o.columns
-			local lines = vim.o.lines
+	if not M.valid_win(win) or not M.is_float(win) then
+		tracked_windows[win] = nil
+		return false
+	end
 
-			if columns == state.last_columns and lines == state.last_lines then
-				return
-			end
+	local resolved_opts = resolve_opts(entry.opts)
+	local ok, err = pcall(vim.api.nvim_win_set_config, win, M.centered_config(resolved_opts))
+	if not ok then
+		tracked_windows[win] = nil
+		vim.notify(("float resize failed: %s"):format(err), vim.log.levels.WARN)
+		return false
+	end
 
-			state.last_columns = columns
-			state.last_lines = lines
-			request_resize()
-		end,
-	})
+	if entry.after_resize then
+		pcall(entry.after_resize, win, resolved_opts)
+	end
 
-	vim.api.nvim_create_autocmd("VimLeavePre", {
-		group = group,
-		once = true,
-		callback = function()
-			if state.timer and not state.timer:is_closing() then
-				state.timer:stop()
-				state.timer:close()
-			end
-
-			resize_states[group_key] = nil
-		end,
-	})
+	return true
 end
 
 function M.resize(win, opts)
@@ -154,13 +120,71 @@ function M.resize(win, opts)
 		return false
 	end
 
-	local ok, err = pcall(vim.api.nvim_win_set_config, win, M.centered_config(opts))
+	local ok, err = pcall(vim.api.nvim_win_set_config, win, M.centered_config(resolve_opts(opts)))
 	if not ok then
 		vim.notify(("float resize failed: %s"):format(err), vim.log.levels.WARN)
 		return false
 	end
 	return true
 end
+
+function M.track(win, opts, after_resize)
+	if not M.valid_win(win) or not M.is_float(win) then
+		return false
+	end
+
+	tracked_windows[win] = {
+		opts = opts,
+		after_resize = after_resize,
+	}
+
+	return apply_tracked_resize(win)
+end
+
+function M.untrack(win)
+	tracked_windows[win] = nil
+end
+
+function M.open(buf, enter, opts, after_resize)
+	local win = vim.api.nvim_open_win(buf, enter ~= false, M.centered_config(resolve_opts(opts)))
+	M.track(win, opts, after_resize)
+	return win
+end
+
+vim.api.nvim_create_autocmd("VimResized", {
+	group = resize_augroup,
+	callback = function()
+		vim.defer_fn(function()
+			if vim.v.exiting and vim.v.exiting ~= 0 then
+				return
+			end
+
+			vim.schedule(function()
+				for win, _ in pairs(tracked_windows) do
+					apply_tracked_resize(win)
+				end
+			end)
+		end, resize_delay_ms)
+	end,
+})
+
+vim.api.nvim_create_autocmd("WinClosed", {
+	group = resize_augroup,
+	callback = function(args)
+		tracked_windows[tonumber(args.match)] = nil
+	end,
+})
+
+vim.api.nvim_create_autocmd("VimLeavePre", {
+	group = resize_augroup,
+	once = true,
+	callback = function()
+		for win, _ in pairs(tracked_windows) do
+			tracked_windows[win] = nil
+		end
+	end,
+})
+
 function M.resize_term_job(job, win)
 	if not job or job <= 0 or not M.valid_win(win) then
 		return

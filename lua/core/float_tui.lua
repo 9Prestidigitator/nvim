@@ -11,7 +11,7 @@ local config = {
 		border = "rounded",
 		title_pos = "center",
 		zindex = 60,
-		resize_delay_ms = 160,
+		resize_delay_ms = 100,
 		cwd = function()
 			return vim.fn.getcwd()
 		end,

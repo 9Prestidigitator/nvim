@@ -11,7 +11,7 @@ local state = {
 
 local config = {
 	split = {
-		width = 24,
+		width = 36,
 		height = 12,
 	},
 	float = {

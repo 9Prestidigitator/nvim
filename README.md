@@ -81,7 +81,9 @@ These are a good to have in you environment for a better development experience.
 
 - [fd](https://github.com/BurntSushi/ripgrep)
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
+- btop
 - [LazyGit](https://github.com/jesseduffield/lazygit)
+- LazyDocker
 
 ## Plugins
 
@@ -96,7 +98,6 @@ These are a good to have in you environment for a better development experience.
 - [flash.nvim](https://github.com/folke/flash.nvim): Cursor teleportation.
 - [vimtex](https://github.com/lervag/vimtex): Shortcuts to compile latex.
 - [obsidian.nvim](https://github.com/epwalsh/obsidian.nvim): Obsidian vault parsing.
-- [lazygit.nvim](https://github.com/kdheepak/lazygit.nvim): LazyGit window.
 
 Might move these to another branch. They are large, somewhat unmaintained, and not always used:
 

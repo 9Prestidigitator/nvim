@@ -1,5 +1,47 @@
 local map = vim.keymap.set
 local terminal = require("core.terminal")
+local float_tui = require("core.float_tui")
+terminal.setup()
+
+-- Portals
+float_tui.setup({
+	apps = {
+		lazygit = {
+			cmd = "lazygit",
+			key = "<leader>lg",
+			desc = "LazyGit",
+			title = " lazygit ",
+			filetype = "lazygit",
+			command = "FloatTuiLazyGit",
+		},
+		lazydocker = {
+			cmd = "lazydocker",
+			key = "<leader>ld",
+			desc = "LazyDocker",
+			title = " lazydocker ",
+			filetype = "lazydocker",
+			command = "FloatTuiLazyDocker",
+		},
+		btop = {
+			cmd = "btop",
+			key = "<leader>lt",
+			desc = "btop",
+			title = " btop ",
+			filetype = "btop",
+			command = "FloatTuiBtop",
+		},
+	},
+})
+map("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Explorer" })
+map("n", "<leader>A", "<CMD>Alpha<CR>", { desc = "Home" })
+map("n", "<leader>u", function()
+	vim.cmd("packadd nvim.undotree")
+	vim.cmd("Undotree")
+end, { desc = "Undotree" })
+map("n", "<leader>xe", function()
+	local dir = vim.fn.getcwd()
+	vim.fn.jobstart({ "xdg-open", dir }, { detach = true })
+end, { desc = "Open cwd in system file explorer" })
 
 -- Terminals
 map("n", "<leader>th", function()
@@ -12,7 +54,7 @@ map("n", "<leader>tj", function()
 	terminal.toggle("bottom")
 end, { desc = "Terminal bottom" })
 map("n", "<leader>tk", function()
-    terminal.toggle("top")
+	terminal.toggle("top")
 end, { desc = "Toggle top" })
 map("n", "<leader>tg", function()
 	terminal.toggle("float")
@@ -20,19 +62,6 @@ end, { desc = "Terminal float" })
 map("n", "<leader>tt", function()
 	terminal.toggle()
 end, { desc = "Toggle terminal" })
-
--- Portals
-map("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Explorer" })
-map("n", "<leader>A", "<CMD>Alpha<CR>", { desc = "Home" })
-map("n", "<leader>lg", ":LazyGit<CR>", { desc = "lazygit" })
-map("n", "<leader>u", function()
-	vim.cmd("packadd nvim.undotree")
-	vim.cmd("Undotree")
-end, { desc = "Undotree" })
-map("n", "<leader>xe", function()
-	local dir = vim.fn.getcwd()
-	vim.fn.jobstart({ "xdg-open", dir }, { detach = true })
-end, { desc = "Open cwd in system file explorer" })
 
 -- Window navigation
 map("n", "<C-h>", "<C-w>h", { silent = true })

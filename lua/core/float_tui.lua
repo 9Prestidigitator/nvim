@@ -1,0 +1,362 @@
+local float_win = require("core.float_win")
+
+local M = {}
+
+local state = {}
+
+local config = {
+	defaults = {
+		width = 0.88,
+		height = 0.84,
+		border = "rounded",
+		title_pos = "center",
+		zindex = 60,
+		cwd = function()
+			return vim.fn.getcwd()
+		end,
+	},
+	apps = {},
+}
+
+local augroup = vim.api.nvim_create_augroup("MaxvimFloatTui", { clear = true })
+
+local valid_win = float_win.valid_win
+local valid_buf = float_win.valid_buf
+
+local function normalize_cmd(cmd)
+	if type(cmd) == "function" then
+		cmd = cmd()
+	end
+
+	if type(cmd) == "string" then
+		return { cmd }
+	end
+
+	return cmd
+end
+
+local function resolve(value)
+	if type(value) == "function" then
+		return value()
+	end
+
+	return value
+end
+
+local function app_state(name)
+	state[name] = state[name] or {
+		buf = nil,
+		win = nil,
+		job = nil,
+	}
+	return state[name]
+end
+
+local function app_config(name)
+	local app = config.apps[name]
+	if not app then
+		return nil
+	end
+
+	return vim.tbl_deep_extend("force", {}, config.defaults, {
+		name = name,
+		title = " " .. name .. " ",
+		filetype = name,
+	}, app)
+end
+
+local function executable_for(app)
+	local cmd = normalize_cmd(app.cmd)
+	return cmd and cmd[1]
+end
+
+function M.is_available(name)
+	local app = app_config(name)
+	if not app then
+		return false
+	end
+
+	local exe = executable_for(app)
+	return exe and vim.fn.executable(exe) == 1
+end
+
+local function job_is_running(s)
+	return s.job and vim.fn.jobwait({ s.job }, 0)[1] == -1
+end
+
+local function visible_win_for_buf(buf)
+	return float_win.visible_win_for_buf(buf)
+end
+
+local function apply_window_options(win)
+	float_win.apply_minimal_options(win)
+end
+
+local function window_config(app)
+	return float_win.centered_config(app)
+end
+
+function M.hide(name)
+	local s = app_state(name)
+	local win = visible_win_for_buf(s.buf) or s.win
+
+	if valid_win(win) then
+		pcall(vim.api.nvim_win_close, win, true)
+	end
+
+	s.win = nil
+end
+
+function M.cleanup(name)
+	local s = app_state(name)
+
+	M.hide(name)
+
+	if valid_buf(s.buf) then
+		pcall(vim.api.nvim_buf_delete, s.buf, { force = true })
+	end
+
+	state[name] = nil
+end
+
+local function set_buffer_keymaps(name, buf)
+	vim.keymap.set({ "t", "n" }, "<C-t>", function()
+		M.hide(name)
+	end, {
+		buffer = buf,
+		silent = true,
+		desc = "Hide floating TUI",
+	})
+
+	for _, lhs in ipairs({
+		"<C-x>",
+		"<C-w>h",
+		"<C-w>j",
+		"<C-w>k",
+		"<C-w>l",
+	}) do
+		vim.keymap.set({ "t", "n" }, lhs, "<Nop>", {
+			buffer = buf,
+			silent = true,
+			nowait = true,
+		})
+	end
+end
+
+local function create_buffer(name, app)
+	local s = app_state(name)
+	local cmd = normalize_cmd(app.cmd)
+
+	if not cmd or not cmd[1] then
+		vim.notify(("No command configured for float_tui app: %s"):format(name), vim.log.levels.ERROR)
+		return nil
+	end
+
+	if vim.fn.executable(cmd[1]) ~= 1 then
+		vim.notify(("Executable not found: %s"):format(cmd[1]), vim.log.levels.ERROR)
+		return nil
+	end
+
+	local buf = vim.api.nvim_create_buf(false, true)
+
+	vim.b[buf].maxvim_float_tui = name
+
+	vim.bo[buf].bufhidden = "hide"
+	vim.bo[buf].swapfile = false
+	vim.bo[buf].filetype = app.filetype
+
+	s.buf = buf
+
+	vim.api.nvim_buf_call(buf, function()
+		s.job = vim.fn.jobstart(cmd, {
+			term = true,
+			cwd = resolve(app.cwd),
+			on_exit = function(job_id)
+				if s.job ~= job_id then
+					return
+				end
+
+				vim.schedule(function()
+					M.cleanup(name)
+				end)
+			end,
+		})
+	end)
+
+	if not s.job or s.job <= 0 then
+		M.cleanup(name)
+		vim.notify(("Failed to start float_tui app: %s"):format(name), vim.log.levels.ERROR)
+		return nil
+	end
+
+	set_buffer_keymaps(name, buf)
+
+	return buf
+end
+
+local function ensure_buffer(name, app)
+	local s = app_state(name)
+
+	if valid_buf(s.buf) and job_is_running(s) then
+		return s.buf
+	end
+
+	M.cleanup(name)
+	return create_buffer(name, app)
+end
+
+function M.open(name)
+	local app = app_config(name)
+	if not app then
+		vim.notify(("Unknown float_tui app: %s"):format(name), vim.log.levels.ERROR)
+		return
+	end
+	local s = app_state(name)
+	local existing_win = visible_win_for_buf(s.buf)
+
+	if valid_win(existing_win) then
+		s.win = existing_win
+		vim.api.nvim_set_current_win(existing_win)
+		vim.cmd.startinsert()
+		return
+	end
+
+	local buf = ensure_buffer(name, app)
+	if not buf then
+		return
+	end
+
+	local win = vim.api.nvim_open_win(buf, true, window_config(app))
+
+	s.win = win
+
+	apply_window_options(win)
+	float_win.resize(win, app)
+	float_win.resize_term_job(s.job, win)
+	vim.api.nvim_set_current_win(win)
+	vim.cmd.startinsert()
+end
+
+function M.toggle(name)
+	local s = app_state(name)
+
+	if valid_win(visible_win_for_buf(s.buf) or s.win) then
+		M.hide(name)
+	else
+		M.open(name)
+	end
+end
+
+function M.map(name)
+	local app = app_config(name)
+
+	if not app or not app.key then
+		return
+	end
+
+	if not M.is_available(name) then
+		return
+	end
+
+	vim.keymap.set("n", app.key, function()
+		M.toggle(name)
+	end, {
+		desc = app.desc or app.title or name,
+		silent = true,
+	})
+end
+
+local function command_name_from_app_name(name)
+	local command = name:gsub("[-_](%w)", function(char)
+		return char:upper()
+	end)
+
+	command = command:gsub("^%l", string.upper)
+
+	return "FloatTui" .. command
+end
+
+local function create_generic_command()
+	pcall(vim.api.nvim_del_user_command, "FloatTui")
+
+	vim.api.nvim_create_user_command("FloatTui", function(opts)
+		M.toggle(opts.args)
+	end, {
+		nargs = 1,
+		complete = function()
+			local names = {}
+
+			for name, _ in pairs(config.apps) do
+				if M.is_available(name) then
+					table.insert(names, name)
+				end
+			end
+
+			table.sort(names)
+			return names
+		end,
+	})
+end
+
+local function create_app_command(name)
+	local app = app_config(name)
+
+	if not app or not app.command then
+		return
+	end
+
+	if not M.is_available(name) then
+		return
+	end
+
+	local command = app.command == true and command_name_from_app_name(name) or app.command
+
+	pcall(vim.api.nvim_del_user_command, command)
+
+	vim.api.nvim_create_user_command(command, function()
+		M.toggle(name)
+	end, {})
+end
+
+local function resize_open_windows()
+	for name, s in pairs(state) do
+		local app = app_config(name)
+		local win = visible_win_for_buf(s.buf) or s.win
+		if app and valid_buf(s.buf) and valid_win(win) then
+			s.win = win
+			if float_win.resize(win, app) then
+				float_win.resize_term_job(s.job, win)
+			end
+		end
+	end
+end
+
+function M.register(name, spec)
+	config.apps[name] = vim.tbl_deep_extend("force", config.apps[name] or {}, spec or {})
+
+	M.map(name)
+	create_app_command(name)
+end
+
+function M.setup(opts)
+	opts = opts or {}
+
+	local apps = opts.apps or {}
+	opts.apps = nil
+
+	config = vim.tbl_deep_extend("force", config, opts)
+
+	vim.api.nvim_clear_autocmds({ group = augroup })
+
+	float_win.on_resize(augroup, resize_open_windows, {
+		debounce_ms = 60,
+	})
+
+	create_generic_command()
+
+	for name, spec in pairs(apps) do
+		M.register(name, spec)
+	end
+end
+
+return M

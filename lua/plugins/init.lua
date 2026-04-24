@@ -20,7 +20,6 @@ vim.pack.add({
 	{ src = "https://github.com/MunifTanjim/nui.nvim" }, -- ui stuff for leetcode
 	{ src = "https://github.com/epwalsh/obsidian.nvim" },
 	{ src = "https://github.com/kawre/leetcode.nvim" },
-	{ src = "https://github.com/kdheepak/lazygit.nvim" },
 
 	{ src = "https://github.com/stevearc/oil.nvim" }, -- File Explorer
 	{ src = "https://github.com/SirZenith/oil-vcs-status" },

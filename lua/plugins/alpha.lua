@@ -28,7 +28,6 @@ dashboard.section.buttons.val = {
 		vim.cmd("cd " .. vim.fn.fnameescape(vim.fn.stdpath("config")))
 		vim.cmd("AutoSession restore")
 	end),
-	dashboard.button("l", "󰊢 " .. " LazyGit", ":LazyGit<CR>"),
 	dashboard.button("q", " " .. " Quit", "<cmd> qa <cr>"),
 }
 dashboard.opts.cursorline = false

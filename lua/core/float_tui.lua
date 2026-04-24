@@ -11,6 +11,7 @@ local config = {
 		border = "rounded",
 		title_pos = "center",
 		zindex = 60,
+		resize_delay_ms = 160,
 		cwd = function()
 			return vim.fn.getcwd()
 		end,
@@ -20,33 +21,13 @@ local config = {
 
 local augroup = vim.api.nvim_create_augroup("FloatTui", { clear = true })
 
-local valid_win = float_win.valid_win
-local valid_buf = float_win.valid_buf
-
-local function normalize_cmd(cmd)
-	if type(cmd) == "function" then
-		cmd = cmd()
-	end
-	if type(cmd) == "string" then
-		return { cmd }
-	end
-	return cmd
-end
-
-local function resolve(value)
-	if type(value) == "function" then
-		return value()
-	end
-
-	return value
-end
-
 local function app_state(name)
 	state[name] = state[name] or {
 		buf = nil,
 		win = nil,
 		job = nil,
 	}
+
 	return state[name]
 end
 
@@ -63,9 +44,8 @@ local function app_config(name)
 	}, app)
 end
 
-local function executable_for(app)
-	local cmd = normalize_cmd(app.cmd)
-	return cmd and cmd[1]
+local function app_cmd(app)
+	return float_win.normalize_cmd(app.cmd)
 end
 
 function M.is_available(name)
@@ -74,44 +54,8 @@ function M.is_available(name)
 		return false
 	end
 
-	local exe = executable_for(app)
-	return exe and vim.fn.executable(exe) == 1
-end
-
-local function job_is_running(s)
-	return s.job and vim.fn.jobwait({ s.job }, 0)[1] == -1
-end
-
-local function visible_win_for_buf(buf)
-	return float_win.visible_win_for_buf(buf)
-end
-
-local function apply_window_options(win)
-	float_win.apply_minimal_options(win)
-end
-
-function M.hide(name)
-	local s = app_state(name)
-	local win = visible_win_for_buf(s.buf) or s.win
-
-	if valid_win(win) then
-		float_win.untrack(win)
-		pcall(vim.api.nvim_win_close, win, true)
-	end
-
-	s.win = nil
-end
-
-function M.cleanup(name)
-	local s = app_state(name)
-
-	M.hide(name)
-
-	if valid_buf(s.buf) then
-		pcall(vim.api.nvim_buf_delete, s.buf, { force = true })
-	end
-
-	state[name] = nil
+	local cmd = app_cmd(app)
+	return cmd and cmd[1] and vim.fn.executable(cmd[1]) == 1
 end
 
 local function set_buffer_keymaps(name, buf)
@@ -138,9 +82,32 @@ local function set_buffer_keymaps(name, buf)
 	end
 end
 
+function M.hide(name)
+	local s = app_state(name)
+	local win = float_win.visible_win_for_buf(s.buf) or s.win
+
+	if float_win.valid_win(win) then
+		float_win.close(win)
+	end
+
+	s.win = nil
+end
+
+function M.cleanup(name)
+	local s = app_state(name)
+
+	M.hide(name)
+
+	if float_win.valid_buf(s.buf) then
+		pcall(vim.api.nvim_buf_delete, s.buf, { force = true })
+	end
+
+	state[name] = nil
+end
+
 local function create_buffer(name, app)
 	local s = app_state(name)
-	local cmd = normalize_cmd(app.cmd)
+	local cmd = app_cmd(app)
 
 	if not cmd or not cmd[1] then
 		vim.notify(("No command configured for float_tui app: %s"):format(name), vim.log.levels.ERROR)
@@ -152,37 +119,30 @@ local function create_buffer(name, app)
 		return nil
 	end
 
-	local buf = vim.api.nvim_create_buf(false, true)
+	local buf, job, err = float_win.create_term_buf(cmd, {
+		cwd = app.cwd,
+		filetype = app.filetype,
+		vars = {
+			maxvim_float_tui = name,
+		},
+		on_exit = function(job_id)
+			if s.job ~= job_id then
+				return
+			end
 
-	vim.b[buf].maxvim_float_tui = name
+			vim.schedule(function()
+				M.cleanup(name)
+			end)
+		end,
+	})
 
-	vim.bo[buf].bufhidden = "hide"
-	vim.bo[buf].swapfile = false
-	vim.bo[buf].filetype = app.filetype
-
-	s.buf = buf
-
-	vim.api.nvim_buf_call(buf, function()
-		s.job = vim.fn.jobstart(cmd, {
-			term = true,
-			cwd = resolve(app.cwd),
-			on_exit = function(job_id)
-				if s.job ~= job_id then
-					return
-				end
-
-				vim.schedule(function()
-					M.cleanup(name)
-				end)
-			end,
-		})
-	end)
-
-	if not s.job or s.job <= 0 then
-		M.cleanup(name)
-		vim.notify(("Failed to start float_tui app: %s"):format(name), vim.log.levels.ERROR)
+	if not buf then
+		vim.notify(("Failed to start float_tui app %s: %s"):format(name, err or "unknown error"), vim.log.levels.ERROR)
 		return nil
 	end
+
+	s.buf = buf
+	s.job = job
 
 	set_buffer_keymaps(name, buf)
 
@@ -192,7 +152,7 @@ end
 local function ensure_buffer(name, app)
 	local s = app_state(name)
 
-	if valid_buf(s.buf) and job_is_running(s) then
+	if float_win.valid_buf(s.buf) and float_win.job_is_running(s.job) then
 		return s.buf
 	end
 
@@ -206,10 +166,11 @@ function M.open(name)
 		vim.notify(("Unknown float_tui app: %s"):format(name), vim.log.levels.ERROR)
 		return
 	end
-	local s = app_state(name)
-	local existing_win = visible_win_for_buf(s.buf)
 
-	if valid_win(existing_win) then
+	local s = app_state(name)
+	local existing_win = float_win.visible_win_for_buf(s.buf)
+
+	if float_win.valid_win(existing_win) then
 		s.win = existing_win
 		vim.api.nvim_set_current_win(existing_win)
 		vim.cmd.startinsert()
@@ -221,15 +182,25 @@ function M.open(name)
 		return
 	end
 
-	local win = float_win.open(buf, true, function()
-		return app_config(name) or app
-	end, function(resized_win)
-		float_win.resize_term_job(s.job, resized_win)
-	end)
+	local win = float_win.open(
+		buf,
+		true,
+		function()
+			return app_config(name) or app
+		end,
+		function(resized_win)
+			float_win.resize_term_job(s.job, resized_win)
+		end,
+		{
+			resize_delay_ms = app.resize_delay_ms,
+			redraw = app.redraw,
+		}
+	)
 
 	s.win = win
 
-	apply_window_options(win)
+	float_win.resize_term_job(s.job, win)
+
 	vim.api.nvim_set_current_win(win)
 	vim.cmd.startinsert()
 end
@@ -237,7 +208,7 @@ end
 function M.toggle(name)
 	local s = app_state(name)
 
-	if valid_win(visible_win_for_buf(s.buf) or s.win) then
+	if float_win.valid_win(float_win.visible_win_for_buf(s.buf) or s.win) then
 		M.hide(name)
 	else
 		M.open(name)

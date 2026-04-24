@@ -5,6 +5,7 @@ local M = {}
 local state = {
 	buf = nil,
 	win = nil,
+	job = nil,
 	layout = "bottom",
 }
 
@@ -21,33 +22,18 @@ local config = {
 		title_pos = "center",
 		zindex = 50,
 		close_on_leave = true,
+		resize_delay_ms = 20,
 	},
 }
 
 local augroup = vim.api.nvim_create_augroup("PopupTerminal", { clear = true })
-
-local valid_win = float_win.valid_win
-local valid_buf = float_win.valid_buf
 
 local function visible_terminal_win()
 	return float_win.visible_win_for_buf(state.buf)
 end
 
 function M.is_open()
-	return valid_win(visible_terminal_win() or state.win)
-end
-
-local function terminal_is_alive(buf)
-	if not valid_buf(buf) then
-		return false
-	end
-
-	local job_id = vim.b[buf].terminal_job_id
-	if not job_id then
-		return false
-	end
-
-	return vim.fn.jobwait({ job_id }, 0)[1] == -1
+	return float_win.valid_win(visible_terminal_win() or state.win)
 end
 
 local function terminal_cmd()
@@ -60,16 +46,11 @@ local function terminal_cmd()
 	return { vim.env.SHELL or "sh" }
 end
 
-local function apply_terminal_window_options(win)
-	float_win.apply_minimal_options(win)
-end
-
 local function close_terminal_window()
 	local win = visible_terminal_win() or state.win
 
-	if valid_win(win) then
-		float_win.untrack(win)
-		pcall(vim.api.nvim_win_close, win, true)
+	if float_win.valid_win(win) then
+		float_win.close(win)
 	end
 
 	state.win = nil
@@ -78,6 +59,10 @@ end
 
 function M.close()
 	close_terminal_window()
+end
+
+local function feedkeys(keys)
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), "n", false)
 end
 
 local function set_terminal_keymaps(buf)
@@ -102,11 +87,7 @@ local function set_terminal_keymaps(buf)
 				return
 			end
 
-			vim.api.nvim_feedkeys(
-				vim.api.nvim_replace_termcodes("<C-\\><C-n><C-w>" .. key, true, false, true),
-				"n",
-				false
-			)
+			feedkeys("<C-\\><C-n><C-w>" .. key)
 		end, {
 			buffer = buf,
 			silent = true,
@@ -114,12 +95,16 @@ local function set_terminal_keymaps(buf)
 		})
 
 		vim.keymap.set("n", "<C-w>" .. key, function()
-			if state.layout == "float" and valid_win(state.win) and vim.api.nvim_get_current_win() == state.win then
+			if
+				state.layout == "float"
+				and float_win.valid_win(state.win)
+				and vim.api.nvim_get_current_win() == state.win
+			then
 				M.close()
 				return
 			end
 
-			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>" .. key, true, false, true), "n", false)
+			feedkeys("<C-w>" .. key)
 		end, {
 			buffer = buf,
 			silent = true,
@@ -129,96 +114,96 @@ local function set_terminal_keymaps(buf)
 end
 
 local function create_terminal_buffer()
-	local buf = vim.api.nvim_create_buf(false, true)
+	local buf, job, err = float_win.create_term_buf(terminal_cmd(), {
+		filetype = "terminal",
+		vars = {
+			maxvim_terminal = true,
+		},
+		on_exit = function(job_id)
+			if state.job ~= job_id then
+				return
+			end
 
-	vim.b[buf].maxvim_terminal = true
+			vim.schedule(function()
+				if float_win.valid_win(state.win) then
+					close_terminal_window()
+				end
 
-	vim.bo[buf].bufhidden = "hide"
-	vim.bo[buf].swapfile = false
-	vim.bo[buf].filetype = "terminal"
+				state.buf = nil
+				state.job = nil
+			end)
+		end,
+	})
 
-	vim.api.nvim_buf_call(buf, function()
-		vim.fn.jobstart(terminal_cmd(), { term = true })
-	end)
+	if not buf then
+		vim.notify(("Failed to start terminal: %s"):format(err or "unknown error"), vim.log.levels.ERROR)
+		return nil
+	end
+
+	state.buf = buf
+	state.job = job
 
 	set_terminal_keymaps(buf)
 
-	state.buf = buf
 	return buf
 end
 
 local function ensure_terminal_buffer()
-	if terminal_is_alive(state.buf) then
+	if float_win.valid_buf(state.buf) and float_win.job_is_running(state.job) then
 		return state.buf
 	end
 
-	if valid_buf(state.buf) then
+	if float_win.valid_buf(state.buf) then
 		pcall(vim.api.nvim_buf_delete, state.buf, { force = true })
 	end
 
 	state.buf = nil
+	state.job = nil
+
 	return create_terminal_buffer()
 end
 
-local function open_left(buf)
-	vim.cmd("topleft vertical split")
+local function open_split(buf, layout)
+	local size = (layout == "left" or layout == "right") and config.split.width or config.split.height
 
-	local win = vim.api.nvim_get_current_win()
+	local win, err = float_win.open_split(buf, layout, size)
+	if not win then
+		vim.notify(err, vim.log.levels.ERROR)
+		return nil
+	end
 
-	vim.api.nvim_win_set_buf(win, buf)
-	vim.api.nvim_win_set_width(win, config.split.width)
-
-	return win
-end
-
-local function open_right(buf)
-	vim.cmd("botright vertical split")
-
-	local win = vim.api.nvim_get_current_win()
-
-	vim.api.nvim_win_set_buf(win, buf)
-	vim.api.nvim_win_set_width(win, config.split.width)
-
-	return win
-end
-
-local function open_top(buf)
-	vim.cmd("topleft split")
-
-	local win = vim.api.nvim_get_current_win()
-
-	vim.api.nvim_win_set_buf(win, buf)
-	vim.api.nvim_win_set_height(win, config.split.height)
-
-	return win
-end
-
-local function open_bottom(buf)
-	vim.cmd("botright split")
-
-	local win = vim.api.nvim_get_current_win()
-
-	vim.api.nvim_win_set_buf(win, buf)
-	vim.api.nvim_win_set_height(win, config.split.height)
+	float_win.resize_term_job(state.job, win)
 
 	return win
 end
 
 local function open_float(buf)
-	return float_win.open(buf, true, function()
+	local win = float_win.open(buf, true, function()
 		return config.float
-	end, function(win)
-		if valid_buf(state.buf) then
-			float_win.resize_term_job(vim.b[state.buf].terminal_job_id, win)
-		end
-	end)
+	end, function(resized_win)
+		float_win.resize_term_job(state.job, resized_win)
+	end, {
+		resize_delay_ms = config.float.resize_delay_ms,
+	})
+
+	float_win.resize_term_job(state.job, win)
+
+	return win
 end
 
 local open_layout = {
-	left = open_left,
-	right = open_right,
-	top = open_top,
-	bottom = open_bottom,
+	left = function(buf)
+		return open_split(buf, "left")
+	end,
+	right = function(buf)
+		return open_split(buf, "right")
+	end,
+	top = function(buf)
+		return open_split(buf, "top")
+	end,
+	bottom = function(buf)
+		return open_split(buf, "bottom")
+	end,
 	float = open_float,
 }
 
@@ -243,16 +228,19 @@ function M.toggle(layout)
 	end
 
 	local buf = ensure_terminal_buffer()
+	if not buf then
+		return
+	end
+
 	local win = opener(buf)
+	if not win then
+		return
+	end
 
 	state.win = win
 	state.layout = layout
 
-	apply_terminal_window_options(win)
-
-	if layout ~= "float" then
-		float_win.resize_term_job(vim.b[buf].terminal_job_id, win)
-	end
+	float_win.apply_minimal_options(win)
 
 	vim.api.nvim_set_current_win(win)
 	vim.cmd.startinsert()
@@ -275,7 +263,7 @@ function M.setup(opts)
 					return
 				end
 
-				if not valid_win(state.win) then
+				if not float_win.valid_win(state.win) then
 					return
 				end
 

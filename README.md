@@ -129,8 +129,6 @@ Might move these to another branch. They are large, somewhat unmaintained, and n
 
 ### Autocomplete
 
-Neovim has it's own native autocomplete. However last time I tried, it was buggy with OmniSharp.
-
 - [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)
 - [cmp-nvim-lsp](https://github.com/hrsh7th/cmp-nvim-lsp.git)
 - cmp-buffer

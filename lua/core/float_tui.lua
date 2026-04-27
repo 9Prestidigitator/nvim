@@ -207,7 +207,6 @@ end
 
 function M.toggle(name)
 	local s = app_state(name)
-
 	if float_win.valid_win(float_win.visible_win_for_buf(s.buf) or s.win) then
 		M.hide(name)
 	else
@@ -221,7 +220,6 @@ function M.map(name)
 	if not app or not app.key then
 		return
 	end
-
 	if not M.is_available(name) then
 		return
 	end
@@ -288,7 +286,6 @@ end
 
 function M.register(name, spec)
 	config.apps[name] = vim.tbl_deep_extend("force", config.apps[name] or {}, spec or {})
-
 	M.map(name)
 	create_app_command(name)
 end
@@ -300,11 +297,9 @@ function M.setup(opts)
 	opts.apps = nil
 
 	config = vim.tbl_deep_extend("force", config, opts)
-
 	vim.api.nvim_clear_autocmds({ group = augroup })
 
 	create_generic_command()
-
 	for name, spec in pairs(apps) do
 		M.register(name, spec)
 	end

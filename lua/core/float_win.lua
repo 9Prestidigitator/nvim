@@ -5,14 +5,19 @@ local resize_timers = {}
 
 local resize_augroup = vim.api.nvim_create_augroup("FloatWindow", { clear = true })
 
+-- True if window is valid, false otherwise or if nil provided.
+-- @param win window to check if valid
 function M.valid_win(win)
 	return win ~= nil and vim.api.nvim_win_is_valid(win)
 end
 
+-- True if buffer is valid, false otherwise or if nil provided.
+-- @param buf buffer to check if valid
 function M.valid_buf(buf)
 	return buf ~= nil and vim.api.nvim_buf_is_valid(buf)
 end
 
+-- If a function is provided, then evaluate function otherwise provide standard value.
 function M.resolve(value)
 	if type(value) == "function" then
 		return value()
@@ -20,6 +25,8 @@ function M.resolve(value)
 	return value
 end
 
+-- Uses M.resolve() to resolve any functions. Then if a singular string is 
+-- provided then treat it as a single element table with string.
 function M.normalize_cmd(cmd)
 	cmd = M.resolve(cmd)
 	if type(cmd) == "string" then

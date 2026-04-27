@@ -8,6 +8,14 @@ Nix-aware [Neovim](https://github.com/neovim/neovim) lua configuration.
 
 This flake packages my lua configuration with my preferred version of neovim (0.12+), ensuring that I write my neovim configuration in lua without nix-language abstraction.
 
+## Wrapped Package
+
+You can use my configuration without touching your config files whatsover with the provided package that wraps neovim and it's configuration.
+
+```nix
+nix run github:9Prestidigitator/nvim
+```
+
 ## Home Manager Module
 
 Add input to flake.

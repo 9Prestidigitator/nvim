@@ -88,7 +88,7 @@ in {
           "text/x-python"
           "application/x-nix"
         ];
-        icon = ./logo.png;
+        icon = ../logo.png;
       };
       mimeApps = {
         enable = true;

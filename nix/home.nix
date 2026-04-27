@@ -124,9 +124,8 @@ in {
           else
             rm -rf "$dst"
             ${pkgs.git}/bin/git clone --branch "$branch" "$repo" "$dst"
-            if [ -d "$pushUrl" ]; then
-              cd "$dst"
-              ${pkgs.git}/bin/git remote set-url --push origin "$pushUrl"
+            if [ -n "$pushUrl" ]; then
+              ${pkgs.git}/bin/git -C "$dst" remote set-url --push origin "$pushUrl"
             fi
           fi
         fi

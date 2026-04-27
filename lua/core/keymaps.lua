@@ -168,6 +168,9 @@ map("n", "<leader>dx", function()
 	require("dap").terminate()
 	require("dap").disconnect()
 end, { desc = "Debugger: Quit" })
+vim.keymap.set("n", "<leader>du", function()
+	require("dapui").open({ reset = true })
+end, { desc = "Reset DAP ui." })
 
 -- etc
 map("n", "<Esc>", "<CMD>noh<CR>", { silent = true })

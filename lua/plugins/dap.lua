@@ -1,15 +1,11 @@
 local dap = require("dap")
 local dapui = require("dapui")
--- This will take the most amount of work to make nix-aware, so I will put it off.
 local env = require("core.env")
 local tools = require("core.tools")
 
 dapui.setup()
 dap.listeners.after.event_initialized.dapui_config = function()
 	dapui.open()
-	vim.keymap.set("n", "<leader>du", function()
-		dapui.open({ reset = true })
-	end, { desc = "Reset DAP ui." })
 end
 dap.listeners.before.attach.dapui_config = function()
 	dapui.open()
@@ -22,38 +18,7 @@ dap.listeners.before.event_terminated.dapui_config = function()
 end
 dap.listeners.before.event_exited.dapui_config = function()
 	dapui.close()
-	vim.keymap.del("n", "<leader>du")
 end
-
-require("dap-python").setup(vim.fn.exepath("python"))
-
-dap.configurations.python = {
-	{
-		name = "Debug python file",
-		type = "python",
-		request = "launch",
-		program = "${file}",
-		args = function()
-			local args_string = vim.fn.input("Arguments: ")
-			return vim.split(args_string, " ")
-		end,
-		pythonPath = function()
-			local conda_path = vim.env.CONDA_PREFIX
-			if conda_path then
-				-- Use conda path if available
-				return conda_path .. "/bin/python"
-			else
-				-- Use the virtualenv if available
-				local venv_path = os.getenv("VIRTUAL_ENV")
-				if venv_path then
-					return venv_path .. "/bin/python"
-				else
-					return vim.fn.exepath("python")
-				end
-			end
-		end,
-	},
-}
 
 local codelldb_cmd
 if env.is_nix() then
@@ -74,29 +39,98 @@ dap.adapters.codelldb = {
 
 dap.configurations.c = {
 	{
-		name = "Debug C or C++ binary",
+		name = "Debug binary",
 		type = "codelldb",
 		request = "launch",
 		cwd = "${workspaceFolder}",
 		stopOnEntry = false,
 		program = function()
-			return vim.fn.input("executable: ", vim.fn.getcwd(), "file")
+			local path = vim.fn.input("Executable: ", vim.fn.getcwd(), "file")
+			if path == "" then
+				return nil
+			end
+			local result = vim.fn.system("cmake --build build")
+			if vim.v.shell_error ~= 0 then
+				vim.notify(result, vim.log.levels.ERROR)
+				return nil
+			end
+			return path
 		end,
 		args = function()
-			local args_string = vim.fn.input("arguments: ")
-			return vim.split(args_string, " ")
+			local args_string = vim.fn.input("Arguments: ")
+			return vim.fn.split(args_string)
+		end,
+	},
+	{
+		name = "Debug binary (skip build)",
+		type = "codelldb",
+		request = "launch",
+		cwd = "${workspaceFolder}",
+		stopOnEntry = false,
+		program = function()
+			local path = vim.fn.input("Executable: ", vim.fn.getcwd(), "file")
+			if path == "" then
+				return nil
+			end
+            return path
+		end,
+		args = function()
+			local args_string = vim.fn.input("Arguments: ")
+			return vim.fn.split(args_string)
 		end,
 	},
 }
-
 dap.configurations.cpp = dap.configurations.c
-dap.configurations.rust = dap.configurations.c
+
+dap.configurations.rust = {
+	{
+		name = "Debug Rust binary",
+		type = "codelldb",
+		request = "launch",
+		cwd = "${workspaceFolder}",
+		stopOnEntry = false,
+		program = function()
+			local path = vim.fn.input("Executable: ", vim.fn.getcwd(), "file")
+			if path == "" then
+				return nil
+			end
+			local result = vim.fn.system("cargo build")
+			if vim.v.shell_error ~= 0 then
+				vim.notify(result, vim.log.levels.ERROR)
+				return nil
+			end
+			return path
+		end,
+		args = function()
+			local args_string = vim.fn.input("Arguments: ")
+			return vim.fn.split(args_string)
+		end,
+	},
+	{
+		name = "Debug Rust binary (skip build)",
+		type = "codelldb",
+		request = "launch",
+		cwd = "${workspaceFolder}",
+		stopOnEntry = false,
+		program = function()
+			local path = vim.fn.input("Executable: ", vim.fn.getcwd(), "file")
+			if path == "" then
+				return nil
+			end
+            return path
+		end,
+		args = function()
+			local args_string = vim.fn.input("Arguments: ")
+			return vim.fn.split(args_string)
+		end,
+	},
+}
 
 local netcoredbg_cmd
 if env.is_nix() then
 	netcoredbg_cmd = vim.fn.exepath("netcoredbg")
 else
-	netcoredbg_cmd = os.getenv("HOME") .. "/.local/share/nvim/mason/packages/netcoredbg/netcoredbg"
+	netcoredbg_cmd = vim.fn.stdpath("data") .. "/mason/packages/netcoredbg/netcoredbg"
 end
 
 dap.adapters.coreclr = {
@@ -107,15 +141,73 @@ dap.adapters.coreclr = {
 }
 dap.configurations.cs = {
 	{
-		name = "Debug c# dll",
+		name = "Debug .NET dll",
 		type = "coreclr",
 		request = "launch",
+		cwd = "${workspaceFolder}",
 		program = function()
-			return vim.fn.input("Path to dll", vim.fn.getcwd(), "file")
+			local path = vim.fn.input("dll: ", vim.fn.getcwd(), "file")
+			if path == "" then
+				return nil
+			end
+			local result = vim.fn.system("dotnet build")
+			if vim.v.shell_error ~= 0 then
+				vim.notify(result, vim.log.levels.ERROR)
+				return nil
+			end
+			return path
+		end,
+		args = function()
+			local args_string = vim.fn.input("Arguments: ")
+			return vim.fn.split(args_string)
+		end,
+	},
+	{
+		name = "Debug .NET dll (skip build)",
+		type = "coreclr",
+		request = "launch",
+		cwd = "${workspaceFolder}",
+		program = function()
+			local path = vim.fn.input("dll: ", vim.fn.getcwd(), "file")
+			if path == "" then
+				return nil
+			end
+            return path
+		end,
+		args = function()
+			local args_string = vim.fn.input("Arguments: ")
+			return vim.fn.split(args_string)
 		end,
 	},
 }
 
-require("mason-nvim-dap").setup({
-	automatic_installation = tools.mason_should_manage_tools(),
-})
+require("dap-python").setup(vim.fn.exepath("python"))
+dap.configurations.python = {
+	{
+		name = "Debug python file",
+		type = "python",
+		request = "launch",
+		program = "${file}",
+		args = function()
+			local args_string = vim.fn.input("Arguments: ")
+			return vim.fn.split(args_string)
+		end,
+		pythonPath = function()
+			local conda_path = vim.env.CONDA_PREFIX
+			if conda_path then
+				-- Use conda path if available
+				return conda_path .. "/bin/python"
+			else
+				-- Use the virtualenv if available
+				local venv_path = os.getenv("VIRTUAL_ENV")
+				if venv_path then
+					return venv_path .. "/bin/python"
+				else
+					return vim.fn.exepath("python")
+				end
+			end
+		end,
+	},
+}
+
+require("mason-nvim-dap").setup({ automatic_installation = tools.mason_should_manage_tools() })

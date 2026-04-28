@@ -17,8 +17,6 @@
           src = ./.;
         };
       };
-      flake = {
-        homeManagerModules.default = import ./nix/home.nix {inherit inputs;};
-      };
+      flake.homeModules.default = import ./nix/home.nix {inherit inputs;};
     };
 }

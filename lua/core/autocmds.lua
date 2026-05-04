@@ -21,6 +21,13 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
 	end,
 })
 
+vim.api.nvim_create_autocmd("TermOpen", {
+	pattern = "*",
+	callback = function(ctx)
+		vim.keymap.set("t", "<C-x>", "<C-\\><C-n>", { buffer = ctx.buf, silent = true, desc = "Exit terminal mode" })
+	end,
+})
+
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "c",
 	callback = function()

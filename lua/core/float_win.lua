@@ -135,6 +135,7 @@ function M.apply_minimal_options(win)
 	vim.wo[win].list = false
 	vim.wo[win].spell = false
 	vim.wo[win].wrap = false
+	vim.wo[win].sidescrolloff = 0
 end
 
 function M.resize_term_job(job, win)

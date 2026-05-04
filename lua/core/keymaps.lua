@@ -46,6 +46,14 @@ float_tui.setup({
 			filetype = "lazysql",
 			command = "FloatTuiLazySql",
 		},
+		vd = {
+			cmd = "vd",
+			key = "<leader>lv",
+			desc = "vd",
+			title = " vd ",
+			filetype = "vd",
+			command = "FloatTuiVd",
+		},
 		btop = {
 			cmd = "btop",
 			key = "<leader>lt",

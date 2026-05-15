@@ -63,7 +63,7 @@ require("plugins.smear-cursor")
 require("plugins.vimtex")
 require("plugins.obsidian")
 
-require("leetcode").setup({ lang = "rust" })
+require("leetcode").setup({ lang = "python3" })
 require("markview").setup()
 require("vague").setup({ transparent = true })
 require("nvim-surround").setup()

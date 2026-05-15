@@ -66,50 +66,54 @@ vim.lsp.config("clangd", {
 })
 
 -- PYTHON
+
+local python_on_attach = function(client, bufnr)
+	on_attach(client, bufnr)
+	if client.name == "ruff" then
+		client.server_capabilities.hoverProvider = false
+		client.server_capabilities.documentFormattingProvider = false
+		client.server_capabilities.documentRangeFormattingProvider = false
+	end
+end
+
 vim.lsp.config("ruff", {
 	cmd = { "ruff", "server" },
 	filetypes = { "python" },
-	on_attach = function(client, bufnr)
-		-- lsp use ruff to formatter
-		client.server_capabilities.documentFormattingProvider = false -- enable vim.lsp.buf.format()
-		client.server_capabilities.documentRangeFormattingProvider = false -- formatting will be used by conform.nvim
-		client.server_capabilities.hoverProvider = false -- use basedpyrigt
-
-		local bufopts = { noremap = true, silent = true, buffer = bufnr }
-		vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
-		vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
-		vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
-		vim.keymap.set("n", "<C-K>", vim.lsp.buf.signature_help, bufopts)
-	end,
+	on_attach = python_on_attach,
 	init_options = {
 		settings = {
 			logLevel = "warn",
-			organizeImports = true, -- use code action for organizeImports
-			showSyntaxErrors = true, -- show syntax error diagnostics
+            lint = {
+                enable = true,
+            },
+			organizeImports = true,
+			showSyntaxErrors = true,
 			codeAction = {
-				disableRuleComment = { enable = false }, -- show code action about rule disabling
-				fixViolation = { enable = false }, -- show code action for autofix violation
+				disableRuleComment = { enable = false },
+				fixViolation = { enable = false },
 			},
-			format = { -- use conform.nvim
+			format = {
 				preview = false,
-			},
-			lint = { -- it links with ruff, but lint.args are different with ruff configuration
-				enable = true,
 			},
 		},
 	},
-	single_file_support = false,
+    single_file_support = true,
 })
 
 vim.lsp.config("basedpyright", {
 	cmd = { "basedpyright-langserver", "--stdio" },
 	filetypes = { "python" },
 	capabilities = capabilities,
-	on_attach = on_attach,
+	on_attach = python_on_attach,
 	settings = {
 		basedpyright = {
 			analysis = {
 				typeCheckingMode = "standard",
+				diagnosticSeverityOverrides = {
+					reportUnusedImport = "none",
+					reportUnusedVariable = "none",
+					reportUndefinedVariable = "none",
+				},
 			},
 		},
 	},

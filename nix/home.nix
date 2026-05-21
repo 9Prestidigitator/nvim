@@ -122,7 +122,7 @@ in {
           if [ -e "$dst" ] && [ -n "$(ls -A "$dst" 2>/dev/null || true)" ]; then
             echo "neovim: $dst exists and is not empty (and not a git repo); not overwriting."
           else
-            rm -rf "$dst"
+            mkdir -p "$dst"
             ${pkgs.git}/bin/git clone --branch "$branch" "$repo" "$dst"
             if [ -n "$pushUrl" ]; then
               ${pkgs.git}/bin/git -C "$dst" remote set-url --push origin "$pushUrl"

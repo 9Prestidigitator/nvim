@@ -67,8 +67,6 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [nvimWrapper];
-
     xdg = lib.mkIf cfg.desktopIntegration {
       desktopEntries.${cfg.name} = {
         name = "Neovim";
@@ -100,35 +98,39 @@ in {
       };
     };
 
-    home.activation.NvimUpdate =
-      lib.hm.dag.entryAfter ["writeBoundary"]
-      (lib.mkIf cfg.config.autoUpdate ''
-        set -euo pipefail
+    home = {
+      packages = [nvimWrapper];
 
-        dst="${cfg.config.dir}"
-        repo="${cfg.config.cloneUrl}"
-        branch="${cfg.config.branch}"
-        pushUrl="${cfg.config.pushUrl}"
+      activation.NvimUpdate =
+        lib.hm.dag.entryAfter ["writeBoundary"]
+        (lib.mkIf cfg.config.autoUpdate ''
+          set -euo pipefail
 
-        mkdir -p "$(dirname "$dst")"
+          dst="${cfg.config.dir}"
+          repo="${cfg.config.cloneUrl}"
+          branch="${cfg.config.branch}"
+          pushUrl="${cfg.config.pushUrl}"
 
-        if [ -d "$dst/.git" ]; then
-          if [ "$(${pkgs.git}/bin/git -C "$dst" rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)" != "HEAD" ] &&
-             ${pkgs.git}/bin/git -C "$dst" rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1 &&
-             [ -z "$(${pkgs.git}/bin/git -C "$dst" status --porcelain)" ]; then
-            ${pkgs.git}/bin/git -C "$dst" pull --ff-only || true
-          fi
-        else
-          if [ -e "$dst" ] && [ -n "$(ls -A "$dst" 2>/dev/null || true)" ]; then
-            echo "neovim: $dst exists and is not empty (and not a git repo); not overwriting."
+          mkdir -p "$(dirname "$dst")"
+
+          if [ -d "$dst/.git" ]; then
+            if [ "$(${pkgs.git}/bin/git -C "$dst" rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)" != "HEAD" ] &&
+               ${pkgs.git}/bin/git -C "$dst" rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1 &&
+               [ -z "$(${pkgs.git}/bin/git -C "$dst" status --porcelain)" ]; then
+              ${pkgs.git}/bin/git -C "$dst" pull --ff-only || true
+            fi
           else
-            mkdir -p "$dst"
-            ${pkgs.git}/bin/git clone --branch "$branch" "$repo" "$dst"
-            if [ -n "$pushUrl" ]; then
-              ${pkgs.git}/bin/git -C "$dst" remote set-url --push origin "$pushUrl"
+            if [ -e "$dst" ] && [ -n "$(ls -A "$dst" 2>/dev/null || true)" ]; then
+              echo "neovim: $dst exists and is not empty (and not a git repo); not overwriting."
+            else
+              mkdir -p "$dst"
+              ${pkgs.git}/bin/git clone --branch "$branch" "$repo" "$dst"
+              if [ -n "$pushUrl" ]; then
+                ${pkgs.git}/bin/git -C "$dst" remote set-url --push origin "$pushUrl"
+              fi
             fi
           fi
-        fi
-      '');
+        '');
+    };
   };
 }

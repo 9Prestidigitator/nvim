@@ -11,15 +11,17 @@ vim.pack.add({
 	{ src = "https://github.com/folke/lazydev.nvim" }, -- Makes lua development much better
 	{ src = "https://github.com/lervag/vimtex" }, -- Latex editing
 
-	{ src = "https://github.com/nvim-lua/plenary.nvim" }, -- bloatmaxing
+	{ src = "https://github.com/nvim-lua/plenary.nvim" }, -- bloatmaxing, also necessary for leetcode
+	{ src = "https://github.com/MunifTanjim/nui.nvim" }, -- ui stuff for leetcode
+	{ src = "https://github.com/kawre/leetcode.nvim" },
+
 	{ src = "https://github.com/rmagatti/auto-session" }, -- Saves sessions by directory
 	{ src = "https://github.com/goolord/alpha-nvim" },
 	{ src = "https://github.com/windwp/nvim-autopairs" }, -- Saves a lot of time
 	{ src = "https://github.com/kylechui/nvim-surround" }, -- Surround plugin
 	{ src = "https://github.com/folke/which-key.nvim" }, -- Because I'm a n00b
-	{ src = "https://github.com/MunifTanjim/nui.nvim" }, -- ui stuff for leetcode
 	{ src = "https://github.com/epwalsh/obsidian.nvim" },
-	{ src = "https://github.com/kawre/leetcode.nvim" },
+	{ src = "https://github.com/RaafatTurki/hex.nvim" },
 
 	{ src = "https://github.com/stevearc/oil.nvim" }, -- File Explorer
 	{ src = "https://github.com/SirZenith/oil-vcs-status" },
@@ -72,3 +74,4 @@ require("mini.icons").setup()
 require("nvim-web-devicons").setup()
 require("gitsigns").setup()
 require("lazydev").setup()
+require("hex").setup()

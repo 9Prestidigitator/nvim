@@ -94,6 +94,14 @@ float_tui.setup({
 			filetype = "codex",
 			command = "FloatTuiCodex",
 		},
+		hermes = {
+			cmd = "hermes",
+			key = "<leader>lh",
+			desc = " hermes ",
+			title = " hermes ",
+			filetype = "hermes",
+			command = "FloatTuiCodex",
+		},
 	},
 })
 map("n", "<leader>e", "<CMD>Oil<CR>", { desc = "Explorer" })

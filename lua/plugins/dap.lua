@@ -21,7 +21,7 @@ dap.listeners.before.event_exited.dapui_config = function()
 end
 
 local codelldb_cmd
-if env.is_nix() then
+if env.is_nix() and os.getenv("CODELLDB_PATH") ~= nil then
 	codelldb_cmd = vim.env.CODELLDB_PATH
 else
 	codelldb_cmd = vim.fn.stdpath("data") .. "/mason/bin/codelldb"

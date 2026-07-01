@@ -1,4 +1,5 @@
 local tools = require("core.tools")
+local env = require("core.env")
 
 require("mason-lspconfig").setup({
 	ensure_installed = tools.mason_should_manage_tools() and tools.lsp_servers or {},
@@ -50,11 +51,18 @@ vim.lsp.config("rust_analyzer", {
 })
 
 -- C/C++
+local clangd_cmd
+if env.is_nix() and os.getenv("CLANGD_PATH") ~= nil then
+	clangd_cmd = vim.env.CLANGD_PATH
+else
+	clangd_cmd = "clangd"
+end
+
 vim.lsp.config("clangd", {
 	capabilities = capabilities,
 	on_attach = on_attach,
 	cmd = {
-		"clangd",
+		clangd_cmd,
 		"--background-index",
 		"--clang-tidy",
 		"--completion-style=detailed",
@@ -83,9 +91,9 @@ vim.lsp.config("ruff", {
 	init_options = {
 		settings = {
 			logLevel = "warn",
-            lint = {
-                enable = true,
-            },
+			lint = {
+				enable = true,
+			},
 			organizeImports = true,
 			showSyntaxErrors = true,
 			codeAction = {
@@ -97,7 +105,7 @@ vim.lsp.config("ruff", {
 			},
 		},
 	},
-    single_file_support = false,
+	single_file_support = false,
 })
 
 vim.lsp.config("basedpyright", {

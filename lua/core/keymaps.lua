@@ -94,14 +94,6 @@ float_tui.setup({
 			filetype = "codex",
 			command = "FloatTuiCodex",
 		},
-		codex_resume = {
-			cmd = "codex resume",
-			key = "<leader>lC",
-			desc = "codex resume",
-			title = " codex ",
-			filetype = "codex",
-			command = "FloatTuiCodex",
-		},
 		hermes = {
 			cmd = "hermes",
 			key = "<leader>lh",

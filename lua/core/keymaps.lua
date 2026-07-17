@@ -81,7 +81,7 @@ float_tui.setup({
 		rmpc = {
 			cmd = "rmpc",
 			key = "<leader>lr",
-			desc = " rmpc ",
+			desc = "rmpc",
 			title = " rmpc ",
 			filetype = "rmpc",
 			command = "FloatTuiRmpc",
@@ -89,7 +89,15 @@ float_tui.setup({
 		codex = {
 			cmd = "codex",
 			key = "<leader>lc",
-			desc = " codex ",
+			desc = "codex",
+			title = " codex ",
+			filetype = "codex",
+			command = "FloatTuiCodex",
+		},
+		codex_resume = {
+			cmd = "codex resume",
+			key = "<leader>lC",
+			desc = "codex resume",
 			title = " codex ",
 			filetype = "codex",
 			command = "FloatTuiCodex",
@@ -97,7 +105,7 @@ float_tui.setup({
 		hermes = {
 			cmd = "hermes",
 			key = "<leader>lh",
-			desc = " hermes ",
+			desc = "hermes",
 			title = " hermes ",
 			filetype = "hermes",
 			command = "FloatTuiCodex",

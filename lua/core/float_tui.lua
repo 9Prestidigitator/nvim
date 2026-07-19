@@ -58,7 +58,7 @@ function M.is_available(name)
 	return cmd and cmd[1] and vim.fn.executable(cmd[1]) == 1
 end
 
-local function set_buffer_keymaps(name, buf)
+local function set_buffer_keymaps(name, app, buf)
 	vim.keymap.set({ "t", "n" }, "<C-t>", function()
 		M.hide(name)
 	end, {
@@ -67,8 +67,21 @@ local function set_buffer_keymaps(name, buf)
 		desc = "Hide floating TUI",
 	})
 
+	if app.cursor_esc then
+		vim.keymap.set("t", "<C-x>", [[<C-\><C-n>]], {
+			buffer = buf,
+			silent = true,
+			desc = "Exit terminal mode",
+		})
+	else
+		vim.keymap.set({ "t", "n" }, "<C-x>", "<Nop>", {
+			buffer = buf,
+			silent = true,
+			nowait = true,
+		})
+	end
+
 	for _, lhs in ipairs({
-		"<C-x>",
 		"<C-w>h",
 		"<C-w>j",
 		"<C-w>k",
@@ -144,7 +157,7 @@ local function create_buffer(name, app)
 	s.buf = buf
 	s.job = job
 
-	set_buffer_keymaps(name, buf)
+	set_buffer_keymaps(name, app, buf)
 
 	return buf
 end

@@ -92,6 +92,7 @@ float_tui.setup({
 			desc = "codex",
 			title = " codex ",
 			filetype = "codex",
+			cursor_esc = true,
 			command = "FloatTuiCodex",
 		},
 		hermes = {
@@ -100,6 +101,7 @@ float_tui.setup({
 			desc = "hermes",
 			title = " hermes ",
 			filetype = "hermes",
+			cursor_esc = true,
 			command = "FloatTuiCodex",
 		},
 	},

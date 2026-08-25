@@ -1,15 +1,17 @@
-local workspaces = {}
-local notes_path = vim.fn.expand("~/notes")
-
-if vim.fn.isdirectory(notes_path) == 1 then
-	table.insert(workspaces, {
-		name = "notes",
-		path = notes_path,
-	})
+local required_dirs = {
+	"~/notes",
+}
+for _, path in ipairs(required_dirs) do
+	if vim.fn.isdirectory(vim.fn.expand(path)) ~= 1 then
+		return
+	end
 end
 
 require("obsidian").setup({
-	workspaces = workspaces,
+	workspaces = {
+		name = "notes",
+		path = "~/notes",
+	},
 	ui = {
 		enable = false,
 	},

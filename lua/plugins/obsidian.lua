@@ -7,10 +7,12 @@ for _, path in ipairs(required_dirs) do
 	end
 end
 
-require("obsidian").setup({
+	require("obsidian").setup({
 	workspaces = {
-		name = "notes",
-		path = "~/notes",
+		{
+			name = "notes",
+			path = "~/notes",
+		},
 	},
 	ui = {
 		enable = false,

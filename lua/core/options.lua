@@ -38,6 +38,11 @@ o.timeoutlen = vim.g.vscode and 1000 or 300
 
 o.shell = vim.env.SHELL or "bash"
 o.shellcmdflag = "-c"
--- if env.is_nixos() and vim.fn.executable("/run/current-system/sw/bin/bash") == 1 then
--- 	o.shell = "/run/current-system/sw/bin/bash"
--- end
+if env.is_nixos() then
+    if vim.fn.executable("/run/current-system/sw/bin/bash") == 1 then
+        o.shell = "/run/current-system/sw/bin/bash"
+    end
+    if vim.fn.executable("/run/current-system/sw/bin/fish") == 1 then
+        o.shell = "/run/current-system/sw/bin/fish"
+    end
+end

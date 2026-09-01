@@ -14,6 +14,7 @@ require("oil").setup({
 local StatusType = require("oil-vcs-status.constant.status").StatusType
 
 require("oil-vcs-status").setup({
+    fs_event_recursive = false,
 	status_symbol = {
 		[StatusType.Added] = "",
 		[StatusType.Copied] = "󰆏",

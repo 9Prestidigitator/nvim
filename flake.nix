@@ -19,7 +19,7 @@
       perSystem = {pkgs, ...}: {
         devShells.default = pkgs.callPackage ./nix/shell.nix {};
         packages.default = pkgs.callPackage ./nix/package.nix {
-          neovimPackage = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
+          neovimPackage = inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
           src = ./.;
         };
       };

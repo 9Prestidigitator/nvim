@@ -29,7 +29,7 @@ in {
     };
     package = lib.mkOption {
       type = lib.types.package;
-      default = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
+      default = inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
       description = "Neovim package to use. Minimum required version is 0.12. Nightly by default.";
     };
     desktopIntegration = lib.mkOption {

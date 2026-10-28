@@ -1,3 +1,16 @@
+local state_dir = vim.fn.stdpath("state")
+local lock_file = state_dir .. "/nvim-pack-lock.json"
+
+vim.fn.mkdir(state_dir, "p")
+
+-- Copy/seed the repo lock file once from the config's lock file.
+if vim.fn.filereadable(lock_file) == 0 then
+	local repo_lock = vim.fn.stdpath("config") .. "/nvim-pack-lock.json"
+	vim.fn.writefile(vim.fn.readfile(repo_lock), lock_file)
+end
+
+vim.o.packlockfile = lock_file
+
 vim.pack.add({
 	{ src = "https://github.com/neovim/nvim-lspconfig" }, -- LSPs
 	{ src = "https://github.com/stevearc/conform.nvim" }, -- Formatter

@@ -35,7 +35,7 @@ in {
     desktopIntegration = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "Whether to add desktop file.";
+      description = "Whether to add a desktop file and MIME associations on Linux.";
     };
     config = {
       dir = lib.mkOption {
@@ -67,7 +67,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    xdg = lib.mkIf cfg.desktopIntegration {
+    xdg = lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux (lib.mkIf cfg.desktopIntegration {
       desktopEntries.${cfg.name} = {
         name = "Neovim";
         genericName = "Text Editor";
@@ -96,7 +96,7 @@ in {
           "application/x-nix" = ["${cfg.name}.desktop"];
         };
       };
-    };
+    });
 
     home = {
       packages = [nvimWrapper];
@@ -109,7 +109,11 @@ in {
           dst="${cfg.config.dir}"
           repo="${cfg.config.cloneUrl}"
           branch="${cfg.config.branch}"
-          pushUrl="${cfg.config.pushUrl}"
+          pushUrl=${lib.escapeShellArg (
+            if cfg.config.pushUrl == null
+            then ""
+            else cfg.config.pushUrl
+          )}
 
           mkdir -p "$(dirname "$dst")"
 

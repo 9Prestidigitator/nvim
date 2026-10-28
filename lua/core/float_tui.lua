@@ -194,21 +194,17 @@ function M.open(name)
 	if not buf then
 		return
 	end
+	-- Creating a buffer replaces the per-app state during cleanup.
+	s = app_state(name)
 
-	local win = float_win.open(
-		buf,
-		true,
-		function()
-			return app_config(name) or app
-		end,
-		function(resized_win)
-			float_win.resize_term_job(s.job, resized_win)
-		end,
-		{
-			resize_delay_ms = app.resize_delay_ms,
-			redraw = app.redraw,
-		}
-	)
+	local win = float_win.open(buf, true, function()
+		return app_config(name) or app
+	end, function(resized_win)
+		float_win.resize_term_job(s.job, resized_win)
+	end, {
+		resize_delay_ms = app.resize_delay_ms,
+		redraw = app.redraw,
+	})
 
 	s.win = win
 

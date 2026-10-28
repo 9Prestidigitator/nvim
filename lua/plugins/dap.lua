@@ -21,8 +21,10 @@ dap.listeners.before.event_exited.dapui_config = function()
 end
 
 local codelldb_cmd
-if env.is_nix() and os.getenv("CODELLDB_PATH") ~= nil then
+if vim.env.CODELLDB_PATH and vim.env.CODELLDB_PATH ~= "" then
 	codelldb_cmd = vim.env.CODELLDB_PATH
+elseif vim.fn.executable("codelldb") == 1 then
+	codelldb_cmd = vim.fn.exepath("codelldb")
 else
 	codelldb_cmd = vim.fn.stdpath("data") .. "/mason/bin/codelldb"
 end
@@ -72,7 +74,7 @@ dap.configurations.c = {
 			if path == "" then
 				return nil
 			end
-            return path
+			return path
 		end,
 		args = function()
 			local args_string = vim.fn.input("Arguments: ")
@@ -117,7 +119,7 @@ dap.configurations.rust = {
 			if path == "" then
 				return nil
 			end
-            return path
+			return path
 		end,
 		args = function()
 			local args_string = vim.fn.input("Arguments: ")
@@ -172,7 +174,7 @@ dap.configurations.cs = {
 			if path == "" then
 				return nil
 			end
-            return path
+			return path
 		end,
 		args = function()
 			local args_string = vim.fn.input("Arguments: ")
@@ -181,7 +183,20 @@ dap.configurations.cs = {
 	},
 }
 
-require("dap-python").setup(vim.fn.exepath("python"))
+-- The adapter needs its own debugpy environment, independent of the project Python.
+local debugpy_python = vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python"
+local debugpy_cmd
+if vim.env.DEBUGPY_PYTHON and vim.env.DEBUGPY_PYTHON ~= "" then
+	debugpy_cmd = vim.env.DEBUGPY_PYTHON
+elseif vim.fn.executable("debugpy-adapter") == 1 then
+	debugpy_cmd = vim.fn.exepath("debugpy-adapter")
+elseif vim.fn.executable(debugpy_python) == 1 or tools.mason_should_manage_tools() then
+	debugpy_cmd = debugpy_python
+else
+	-- Supply debugpy-adapter through Nix, or set DEBUGPY_PYTHON to a Python with debugpy.
+	debugpy_cmd = "debugpy-adapter"
+end
+require("dap-python").setup(debugpy_cmd)
 dap.configurations.python = {
 	{
 		name = "Debug python file",
@@ -203,7 +218,7 @@ dap.configurations.python = {
 				if venv_path then
 					return venv_path .. "/bin/python"
 				else
-					return vim.fn.exepath("python")
+					return vim.fn.exepath("python") ~= "" and vim.fn.exepath("python") or vim.fn.exepath("python3")
 				end
 			end
 		end,

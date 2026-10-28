@@ -3,7 +3,7 @@ local tools = require("core.tools")
 -- Formatters
 require("conform").setup({
 	formatters = {
-        -- Might remove later and just rely on .clang-format files as I start working on more projects
+		-- Might remove later and just rely on .clang-format files as I start working on more projects
 		["clang-format"] = {
 			prepend_args = {
 				"--style={BasedOnStyle: LLVM, IndentWidth: 4, TabWidth: 4, UseTab: Never}",
@@ -11,7 +11,7 @@ require("conform").setup({
 		},
 	},
 	formatters_by_ft = {
-		bash = { "shfmt" },
+		sh = { "shfmt" },
 		lua = { "stylua" },
 		python = { "black" },
 		cs = { "csharpier" },
@@ -21,6 +21,9 @@ require("conform").setup({
 		tex = { "tex-fmt" },
 		matlab = { lsp_format = "first" },
 		javascript = { "prettier" },
+		javascriptreact = { "prettier" },
+		typescript = { "prettier" },
+		typescriptreact = { "prettier" },
 		json = { "jq" },
 		toml = { "taplo" },
 		css = { "prettierd" },

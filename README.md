@@ -33,13 +33,13 @@ Import the module in a home manager configuration:
 ```nix
 {
   imports = [
-    inputs.maxvim.homeManagerModules.default
+    inputs.maxvim.homeModules.default
   ];
   programs.maxvim = {
     enable = true;
     name = "NvimCustom";
     config = {
-      dir = "${config.xdg.configHome}/customNvimConfig"
+      dir = "${config.xdg.configHome}/customNvimConfig";
       autoUpdate = true;
     };
   };

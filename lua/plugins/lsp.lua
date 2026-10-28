@@ -8,7 +8,7 @@ require("mason-lspconfig").setup({
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-local on_attach = function(client, bufnr)
+local on_attach = function(_, bufnr)
 	local bufopts = { noremap = true, silent = true, buffer = bufnr }
 	vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
 	vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
@@ -192,6 +192,12 @@ vim.lsp.config("texlab", {
 		-- disable 'latex' source diagnostics
 		["textDocument/publishDiagnostics"] = publishDiagnostics_texlab,
 	},
+})
+
+-- TS/JS
+vim.lsp.config("ts_ls", {
+	capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities),
+	on_attach = on_attach,
 })
 
 -- MATLAB

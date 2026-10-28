@@ -114,7 +114,8 @@ map("n", "<leader>u", function()
 end, { desc = "Undotree" })
 map("n", "<leader>xe", function()
 	local dir = vim.fn.getcwd()
-	vim.fn.jobstart({ "xdg-open", dir }, { detach = true })
+	local opener = vim.fn.has("macunix") == 1 and "open" or "xdg-open"
+	vim.fn.jobstart({ opener, dir }, { detach = true })
 end, { desc = "Open cwd in system file explorer" })
 
 -- Terminals
